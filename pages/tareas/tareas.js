@@ -6,14 +6,14 @@
   const MONTHS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
   const seedTasks = () => [
-    { id: 1, title: "Comprar leche", desc: "Comprar leche descremada en el supermercado.", priority: "alta", date: "2025-01-15", done: true },
-    { id: 2, title: "Estudiar Java", desc: "Repasar los capítulos 8 al 12 de colecciones.", priority: "media", date: "2025-01-16", done: false },
-    { id: 3, title: "Hacer ejercicio", desc: "Completar la rutina de cardio de 45 minutos.", priority: "alta", date: "2025-01-17", done: false },
-    { id: 4, title: "Leer libro", desc: "Leer 20 páginas del libro de desarrollo personal.", priority: "baja", date: "2025-01-18", done: false },
-    { id: 5, title: "Terminar informe", desc: "Finalizar el informe mensual de avances.", priority: "alta", date: "2025-01-19", done: false },
-    { id: 6, title: "Organizar escritorio", desc: "Ordenar documentos y limpiar el espacio de trabajo.", priority: "media", date: "2025-01-20", done: false },
-    { id: 7, title: "Planificar viaje", desc: "Definir itinerario y reservar alojamiento.", priority: "media", date: "2025-01-21", done: true },
-    { id: 8, title: "Ver documental", desc: "Ver un documental sobre productividad.", priority: "baja", date: "2025-01-22", done: false },
+    { id: 1, title: "Comprar leche", desc: "Comprar leche descremada en el supermercado.", priority: "alta", date: "2025-01-15T08:00", done: true },
+    { id: 2, title: "Estudiar Java", desc: "Repasar los capítulos 8 al 12 de colecciones.", priority: "media", date: "2025-01-16T09:00", done: false },
+    { id: 3, title: "Hacer ejercicio", desc: "Completar la rutina de cardio de 45 minutos.", priority: "alta", date: "2025-01-17T18:00", done: false },
+    { id: 4, title: "Leer libro", desc: "Leer 20 páginas del libro de desarrollo personal.", priority: "baja", date: "2025-01-18T21:00", done: false },
+    { id: 5, title: "Terminar informe", desc: "Finalizar el informe mensual de avances.", priority: "alta", date: "2025-01-19T14:00", done: false },
+    { id: 6, title: "Organizar escritorio", desc: "Ordenar documentos y limpiar el espacio de trabajo.", priority: "media", date: "2025-01-20T11:00", done: false },
+    { id: 7, title: "Planificar viaje", desc: "Definir itinerario y reservar alojamiento.", priority: "media", date: "2025-01-21T10:00", done: true },
+    { id: 8, title: "Ver documental", desc: "Ver un documental sobre productividad.", priority: "baja", date: "2025-01-22T20:00", done: false },
   ];
 
   const state = {
@@ -36,11 +36,22 @@
     localStorage.setItem(STORAGE_TASKS, JSON.stringify(state.tasks));
   }
 
-  function formatDate(isoDate) {
-    if (!isoDate) return "";
-    const [y, m, d] = isoDate.split("-").map(Number);
-    if (!y || !m || !d) return isoDate;
-    return `${d} ${MONTHS[m - 1]} ${y}`;
+  function formatDate(isoDateTime) {
+    if (!isoDateTime) return "";
+    const [datePart, timePart] = isoDateTime.split("T");
+    const [y, m, d] = datePart.split("-").map(Number);
+    if (!y || !m || !d) return isoDateTime;
+
+    let formatted = `${d} ${MONTHS[m - 1]} ${y}`;
+
+    if (timePart) {
+      const [hh, mm] = timePart.split(":").map(Number);
+      const period = hh >= 12 ? "PM" : "AM";
+      const hour12 = hh % 12 === 0 ? 12 : hh % 12;
+      formatted += ` · ${hour12}:${String(mm).padStart(2, "0")} ${period}`;
+    }
+
+    return formatted;
   }
 
   function escapeHtml(str) {
@@ -67,8 +78,7 @@
   const dateInput = document.getElementById("taskDate");
   const formError = document.getElementById("formError");
 
-  // Revisa los datos del formulario antes de crear la tarea.
-  // Devuelve un mensaje de error si algo falta, o null si todo es válido.
+  // Revisa el formulario: devuelve un mensaje de error o null si está bien.
   function validFormFieldInput(data) {
     console.log("nombre:", data.title);
     console.log("descripcion:", data.desc);

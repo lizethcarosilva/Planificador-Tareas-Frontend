@@ -99,13 +99,7 @@ body {
   background: var(--priority-baja) !important;
 }
 
-/*
-  Logo: logo-dark.png es una imagen fuente grande, así que se recorta
-  con overflow:hidden + posición absoluta (igual que en Figma).
-  logo-light.png ya viene del tamaño correcto, así que solo se ajusta
-  con object-fit. Cuál de las dos se ve depende del tema, usando las
-  mismas clases .sponsor-logo-dark / .sponsor-logo-light de más abajo.
-*/
+/* logo-dark.png es grande y se recorta; logo-light.png ya viene del tamaño correcto */
 .logo-wrap {
   width: 40px;
   height: 40px;
@@ -236,10 +230,7 @@ body {
   color: #fff;
 }
 
-/*
-  Tarjeta de tarea: en Figma el borde completo (no solo el izquierdo)
-  va teñido con el color de la prioridad al ~20% de opacidad.
-*/
+/* Borde completo de la tarjeta teñido según la prioridad */
 .task-card.priority-alta {
   border-color: color-mix(in srgb, var(--priority-alta) 20%, transparent);
 }
@@ -308,10 +299,7 @@ body {
 }
 .progress-ring-fill {
   fill: none;
-  /* stroke no acepta linear-gradient(): en SVG un degradado se define
-     con <linearGradient> (ver <defs> en el SVG) y se referencia con
-     url(#id). Los colores de esa gradiente salen de los dos <stop> de
-     abajo, que sí pueden usar nuestras variables de marca. */
+  /* el degradado está definido en el <linearGradient> del SVG */
   stroke: url(#progressGradient);
   stroke-width: 5;
   stroke-linecap: round;
@@ -548,7 +536,7 @@ body {
   height: 3px;
   margin-top: 6px;
   border-radius: 2px;
-  background: linear-gradient(90deg, var(--accent-1), var(--accent-3));
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
 }
 
 .auth-brand-logo {
@@ -572,13 +560,7 @@ body {
   padding: 80px;
 }
 
-/*
-  Borde degradado que SÍ respeta el border-radius: border-image (lo que
-  se usaba antes) ignora el radio en todos los navegadores, por eso las
-  esquinas quedaban rectas pase lo que pase. Esta técnica usa dos fondos
-  apilados (uno recortado al padding-box, otro al border-box) en vez de
-  border-image, así el radio sí se aplica correctamente.
-*/
+/* Borde degradado con esquinas redondeadas (dos fondos: uno adentro, otro en el borde) */
 .auth-card {
   width: 100%;
   max-width: 400px;

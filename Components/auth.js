@@ -1,7 +1,4 @@
-/*
-  Autenticación transversal (demo): un único usuario "hardcodeado".
-  No hay backend, así que la sesión solo vive en localStorage.
-*/
+// Usuario de prueba hardcodeado. La sesión se guarda en localStorage.
 (() => {
   "use strict";
 

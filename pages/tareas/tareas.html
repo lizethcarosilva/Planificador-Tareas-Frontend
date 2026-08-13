@@ -53,7 +53,7 @@
 
             <div>
               <label for="taskDate" class="form-label form-label-strong d-block">FECHA LÍMITE</label>
-              <input id="taskDate" name="fecha" type="date" class="form-control" required>
+              <input id="taskDate" name="fecha" type="datetime-local" class="form-control" required>
             </div>
 
             <div class="alert alert-danger py-2 small mb-0" id="formError" hidden></div>
@@ -80,7 +80,7 @@
               <li class="nav-item"><button class="nav-link" data-filter="baja" type="button">BAJA</button></li>
             </ul>
 
-            <!-- Progreso: reubicado aquí, dentro de TaskList/Section -->
+            <!-- Progreso -->
             <div class="progress-widget bg-body-tertiary border d-flex align-items-center">
               <svg class="progress-ring" viewBox="0 0 60 60">
                 <defs>

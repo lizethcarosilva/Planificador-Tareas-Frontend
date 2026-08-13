@@ -1,11 +1,4 @@
-/*
-  Navbar transversal: se usa en TODAS las páginas.
-  El HTML vive en navbar.html (Components/navbar.html); este archivo
-  solo lo trae con fetch, lo inserta donde encuentre <div id="navbar-root">
-  y conecta el comportamiento: qué enlace queda activo, los datos del
-  usuario, el interruptor de tema (data-bs-theme, que es lo que usa
-  Bootstrap 5.3 para su modo oscuro nativo) y el botón de cerrar sesión.
-*/
+// Navbar compartida por todas las páginas. Carga navbar.html y le da comportamiento.
 (() => {
   "use strict";
 

@@ -1,8 +1,4 @@
-/*
-  Footer transversal: se usa en TODAS las páginas.
-  El HTML vive en footer.html (Components/footer.html); este archivo
-  solo lo trae con fetch y lo inserta donde encuentre <div id="footer-root">.
-*/
+// Footer compartido por todas las páginas. Carga footer.html y lo inserta en la página.
 (() => {
   "use strict";
 
