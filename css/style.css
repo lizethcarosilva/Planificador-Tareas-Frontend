@@ -1,0 +1,811 @@
+
+/* ===== 1) Colores de marca por tema ===== */
+:root,
+[data-bs-theme="light"] {
+  --accent-1: #284c73; /* azul   */
+  --accent-2: #7e5f42; /* marrón */
+  --accent-3: #FEFCF9;
+
+
+  --priority-alta: #e11d48;
+  --priority-media: #f59e0b;
+  --priority-baja: #059669;
+
+  --bs-body-bg: #fefcf9;
+  --bs-body-color: #281d16;
+  --bs-border-color: rgba(40, 29, 22, 0.12);
+  --bs-border-color-translucent: rgba(40, 29, 22, 0.12);
+  --bs-tertiary-bg: rgba(40, 29, 22, 0.05);
+  --bs-secondary-bg: rgba(40, 29, 22, 0.06);
+  --bs-secondary-color: rgba(40, 29, 22, 0.75);
+  --bs-emphasis-color: #281d16;
+}
+
+[data-bs-theme="dark"] {
+  --accent-1: #7c3aed; /* morado */
+  --accent-2: #ec4899; /* rosa   */
+  --accent-3: #06b6d4; /* cian   */
+
+  --accent-4: #121221; /* gris oscuro */
+  --accent-5: #080818; /* azul oscuro */
+  --accent-6: #F0F0FF; /*  blanco hueso */
+
+  --priority-alta: #ff3b64;
+  --priority-media: #fbb034;
+  --priority-baja: #1da36d;
+
+  --bs-body-bg: #080818;
+  --bs-body-color: #f0f0ff;
+  --bs-border-color: rgba(255, 255, 255, 0.08);
+  --bs-border-color-translucent: rgba(255, 255, 255, 0.08);
+  --bs-tertiary-bg: rgba(255, 255, 255, 0.04);
+  --bs-secondary-bg: rgba(255, 255, 255, 0.05);
+  --bs-secondary-color: rgba(240, 240, 255, 0.7);
+  --bs-emphasis-color: #f0f0ff;
+}
+
+body {
+  font-family: "Poppins", system-ui, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ===== 2) Utilidades de marca ===== */
+.brand-bar {
+  width: 4px;
+  height: 22px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent-2), var(--accent-1));
+  flex-shrink: 0;
+}
+
+.btn-brand {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  border: none;
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn-brand:hover,
+.btn-brand:focus {
+  color: #fff;
+  filter: brightness(1.08);
+}
+
+.dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.dot-alta {
+  background: var(--priority-alta);
+}
+.dot-media {
+  background: var(--priority-media);
+}
+.dot-baja {
+  background: var(--priority-baja);
+}
+
+.badge-alta {
+  background: var(--priority-alta) !important;
+}
+.badge-media {
+  background: var(--priority-media) !important;
+}
+.badge-baja {
+  background: var(--priority-baja) !important;
+}
+
+/*
+  Logo: logo-dark.png es una imagen fuente grande, así que se recorta
+  con overflow:hidden + posición absoluta (igual que en Figma).
+  logo-light.png ya viene del tamaño correcto, así que solo se ajusta
+  con object-fit. Cuál de las dos se ve depende del tema, usando las
+  mismas clases .sponsor-logo-dark / .sponsor-logo-light de más abajo.
+*/
+.logo-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.logo-crop {
+  position: absolute;
+  width: 253.12%;
+  height: 168.75%;
+  left: -75.33%;
+  top: -30.08%;
+  max-width: none;
+}
+
+.logo-fit {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sponsor-logo-wrap {
+  width: 250px;
+  height: 64px;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.sponsor-logo-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sponsor-logo-dark {
+  display: block;
+}
+.sponsor-logo-light {
+  display: none;
+}
+[data-bs-theme="dark"] .sponsor-logo-dark {
+  display: block;
+}
+[data-bs-theme="dark"] .sponsor-logo-light {
+  display: none;
+}
+[data-bs-theme="light"] .sponsor-logo-dark {
+  display: none;
+}
+[data-bs-theme="light"] .sponsor-logo-light {
+  display: block;
+}
+
+.navbar .nav-link {
+  border-radius: 8px;
+  padding: 0.375rem 0.875rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+.navbar .nav-link.active {
+  background: color-mix(in srgb, var(--accent-1) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-1) 30%, transparent);
+  color: var(--accent-1) !important;
+}
+
+/* Avatar con degradado de marca */
+.avatar-brand {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  color: #fff;
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+}
+
+/* Interruptor de tema: es un form-check form-switch de Bootstrap,
+   solo coloreamos la bolita cuando está activo. */
+#themeToggle {
+  cursor: pointer;
+}
+#themeToggle:checked {
+  background-color: var(--accent-1);
+  border-color: var(--accent-1);
+}
+
+/* Selector de PRIORIDAD: grupo de botones con btn-check por debajo,
+   cada label se colorea según la prioridad cuando está seleccionada. */
+.priority-btn {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.btn-check:checked + label.priority-alta {
+  background: var(--priority-alta);
+  border-color: var(--priority-alta);
+  color: #fff;
+}
+.btn-check:checked + label.priority-media {
+  background: var(--priority-media);
+  border-color: var(--priority-media);
+  color: #fff;
+}
+.btn-check:checked + label.priority-baja {
+  background: var(--priority-baja);
+  border-color: var(--priority-baja);
+  color: #fff;
+}
+
+/* Pestañas de filtro (TODAS/ALTA/MEDIA/BAJA): nav-pills de Bootstrap,
+   con degradado de marca en la pestaña activa. */
+#filterTabs .nav-link {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--bs-body-color);
+}
+#filterTabs .nav-link.active {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+}
+
+/*
+  Tarjeta de tarea: en Figma el borde completo (no solo el izquierdo)
+  va teñido con el color de la prioridad al ~20% de opacidad.
+*/
+.task-card.priority-alta {
+  border-color: color-mix(in srgb, var(--priority-alta) 20%, transparent);
+}
+.task-card.priority-media {
+  border-color: color-mix(in srgb, var(--priority-media) 20%, transparent);
+}
+.task-card.priority-baja {
+  border-color: color-mix(in srgb, var(--priority-baja) 20%, transparent);
+}
+
+.task-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid var(--bs-border-color);
+  background: transparent;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.task-card.is-done .task-check {
+  border: none;
+}
+.task-card.priority-alta.is-done .task-check {
+  background: var(--priority-alta);
+}
+.task-card.priority-media.is-done .task-check {
+  background: var(--priority-media);
+}
+.task-card.priority-baja.is-done .task-check {
+  background: var(--priority-baja);
+}
+
+.task-card.is-done .task-title,
+.task-card.is-done .task-desc {
+  color: var(--bs-secondary-color);
+  text-decoration: line-through;
+}
+
+.task-delete {
+  border: none;
+  background: transparent;
+  color: var(--bs-secondary-color);
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+}
+.task-delete:hover {
+  color: var(--priority-alta);
+}
+
+/* Anillo de progreso (SVG) */
+.progress-ring {
+  width: 44px;
+  height: 44px;
+  transform: rotate(-90deg);
+}
+.progress-ring-track {
+  fill: none;
+  stroke: var(--bs-border-color);
+  stroke-width: 5;
+}
+.progress-ring-fill {
+  fill: none;
+  /* stroke no acepta linear-gradient(): en SVG un degradado se define
+     con <linearGradient> (ver <defs> en el SVG) y se referencia con
+     url(#id). Los colores de esa gradiente salen de los dos <stop> de
+     abajo, que sí pueden usar nuestras variables de marca. */
+  stroke: url(#progressGradient);
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
+}
+.progress-gradient-start {
+  stop-color: var(--accent-1);
+}
+.progress-gradient-end {
+  stop-color: var(--accent-2);
+}
+
+/* Paginación con degradado de marca en la página activa */
+.pagination .page-item.active .page-link {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  border-color: transparent;
+  color: #fff;
+}
+.pagination .page-link {
+  color: var(--bs-body-color);
+}
+
+/* Página de marcador de posición (Dashboard/Calendario/Reportes) */
+.placeholder-main {
+  min-height: 60vh;
+}
+
+/* ===== 3) Medidas exactas del diseño de Figma (página Tareas) ===== */
+
+/* Navbar: alto 68px, separación logo-nombre 14px */
+.navbar {
+  min-height: 68px;
+}
+.navbar-brand {
+  gap: 14px !important;
+}
+
+/* Tarjeta "NUEVA TAREA" */
+.card-form-tarea {
+
+  height: 100%;
+  border-radius: 20px;
+  padding: 28px;
+  gap: 22px;
+  background: rgba(40, 76, 115, 0.08);
+  border: 1px solid rgba(40, 76, 115, 0.28);
+  justify-content: space-between;
+}
+
+
+[data-bs-theme="dark"] .card-form-tarea {
+  background: rgba(124, 58, 237, 0.1);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+.form-label-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+.form-label-strong {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+
+.card-form-tarea .form-control {
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 13px;
+  background: white;
+  border: 1px solid rgba(40, 76, 115, 0.35);
+}
+[data-bs-theme="dark"] .card-form-tarea .form-control {
+  background: rgba(124, 58, 237, 0.14);
+  border-color: rgba(124, 58, 237, 0.32);
+  color: var(--bs-body-color);
+}
+.card-form-tarea .form-control:focus {
+  border-color: var(--accent-1);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--accent-1) 25%, transparent);
+}
+.card-form-tarea textarea.form-control {
+  min-height: 72px;
+}
+
+.priority-btn {
+  height: 34px;
+  border-radius: 10px !important;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.btn-group.priority-picker {
+  gap: 8px;
+}
+
+.btn-brand {
+  height: 46px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+/* Widget de progreso (ahora vive en TaskList/Section, no en el formulario) */
+.progress-widget {
+  border-radius: 12px;
+  padding: 10px 16px;
+  gap: 12px;
+  background: rgba(40, 76, 115, 0.06);
+  border: 1px solid rgba(40, 76, 115, 0.16);
+}
+[data-bs-theme="dark"] .progress-widget {
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.18);
+}
+.progress-widget .progress-ring {
+  width: 40px;
+  height: 40px;
+}
+.progress-widget .progress-pct {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Encabezado de LISTA DE TAREAS */
+#filterTabs .nav-link {
+  border-radius: 100px;
+  padding: 6px 14px;
+}
+
+/* Barra de resumen (ALTA/MEDIA/BAJA/completadas) */
+.task-summary-bar {
+  border-radius: 12px;
+  padding: 10px 16px;
+  gap: 20px;
+}
+
+/* Tarjeta de tarea individual */
+.task-card {
+  border-radius: 16px !important;
+}
+.task-card .card-body {
+  padding: 18px 20px;
+  gap: 14px;
+}
+.task-title {
+  font-size: 15px;
+}
+.task-desc {
+  font-size: 13px;
+}
+.badge-priority {
+  font-size: 9px;
+  padding: 3px 10px;
+}
+
+/* Paginación: cuadritos de 34x34 separados, no la barra unida clásica de Bootstrap */
+.pagination {
+  gap: 8px;
+}
+.pagination .page-link {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.text-brand-accent {
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-brand-gradient {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ===== 4) Inicio de sesión / Registro (pantalla dividida) ===== */
+.auth-shell {
+  min-height: 100vh;
+  background: #080818;
+  color: #f4f4ff;
+}
+[data-bs-theme="light"] .auth-shell {
+  background: #fefcf9;
+  color: #281d16;
+}
+
+
+.auth-illustration {
+  min-height: 320px;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 0 200px 200px 0;
+  border-right: 1px solid var(--accent-3);
+  background: linear-gradient(45deg, color-mix(in srgb, var(--accent-3) 10%, #0a0a1a) 5%, color-mix(in srgb, var(--accent-4) 100%, #0a0a1a) 15%, color-mix(in srgb, var(--accent-3) 10%, #0a0a1a) 65%, color-mix(in srgb, var(--accent-5) 100%, #0a0a1a) 85%, color-mix(in srgb, var(--accent-3) 10%, #0a0a1a) 100%);
+}
+[data-bs-theme="light"] .auth-illustration {
+  border-color: var(--accent-1);
+  background: linear-gradient(45deg, color-mix(in srgb, var(--accent-1) 10%, #284c73 20%) 5%, color-mix(in srgb, var(--accent-3) 100%, #fefcf9) 15%, color-mix(in srgb, var(--accent-1) 5%, #284c73 25%) 65%, color-mix(in srgb, var(--accent-3) 100%, #fefcf9) 85%, color-mix(in srgb, var(--accent-1) 5%, #284c73 20%) 100%);
+}
+
+/* En Registro la ilustración va a la derecha: se espeja (redondeado a
+   la izquierda, hacia la tarjeta; recto a la derecha, hacia el borde). */
+.auth-illustration-flip {
+  border-radius: 200px 0 0 200px;
+  border-left: 1px solid var(--accent-3);
+}
+
+.auth-illustration .script-logo {
+  font-family: "Segoe Script", "Brush Script MT", cursive;
+  font-size: 28px;
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 4px;
+  display: inline-block;
+}
+
+.auth-heading-underline {
+  width: 90px;
+  height: 3px;
+  margin-top: 6px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-3));
+}
+
+.auth-brand-logo {
+  display: block;
+  width: 220px;
+  height: 59px;
+}
+
+.auth-illustration-img {
+  display: block;
+  max-width: 480px;
+  width: 100%;
+  height: auto;
+  
+}
+
+.auth-card-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px;
+}
+
+/*
+  Borde degradado que SÍ respeta el border-radius: border-image (lo que
+  se usaba antes) ignora el radio en todos los navegadores, por eso las
+  esquinas quedaban rectas pase lo que pase. Esta técnica usa dos fondos
+  apilados (uno recortado al padding-box, otro al border-box) en vez de
+  border-image, así el radio sí se aplica correctamente.
+*/
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  background: linear-gradient(#14101f, #14101f) padding-box,
+    linear-gradient(180deg, var(--accent-3), var(--accent-1)) border-box;
+}
+[data-bs-theme="light"] .auth-card {
+  background: linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(180deg, color-mix(in srgb, var(--accent-1) 30%, transparent), color-mix(in srgb, var(--accent-2) 30%, transparent)) border-box;
+}
+
+.auth-icon-badge {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.auth-underline {
+  width: 64px;
+  height: 3px;
+  margin: 10px auto 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+}
+
+/* Campo con ícono: una sola caja con borde, sin las costuras del input-group */
+.auth-field {
+  position: relative;
+}
+.auth-field .form-control {
+  height: 42px;
+  border-radius: 10px;
+  padding-left: 38px;
+  background: transparent;
+  border-color: var(--bs-border-color);
+  color: var(--bs-body-color);
+}
+.auth-field .form-control:focus {
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--accent-2) 20%, transparent);
+}
+.auth-field .field-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--bs-secondary-color);
+  pointer-events: none;
+}
+.auth-field .field-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--bs-secondary-color);
+  padding: 4px;
+}
+.auth-field.has-toggle .form-control {
+  padding-right: 34px;
+}
+
+.auth-card .form-check-input:checked {
+  background-color: var(--accent-2);
+  border-color: var(--accent-2);
+}
+.auth-card a {
+  color: var(--accent-2);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--bs-secondary-color);
+  font-size: 12px;
+  margin: 6px 0;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--bs-border-color);
+}
+
+.btn-google {
+  background: white;
+  color: #281d16;
+  border: 1px solid rgba(40, 29, 22, 0.2);
+  font-weight: 600;
+  font-size: 13px;
+}
+.btn-google:hover {
+  background: #f5f5f5;
+  color: #281d16;
+}
+
+/* ===== 5) Dashboard ===== */
+.dashboard-card {
+  border-radius: 16px;
+  padding: 20px;
+  border: none;
+  height: 100%;
+}
+.dashboard-card-today {
+  background: rgba(124, 58, 237, 0.1);
+}
+[data-bs-theme="light"] .dashboard-card-today {
+  background: #f5ede1;
+}
+
+.today-task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+.today-task-item:last-of-type {
+  border-bottom: none;
+}
+.today-task-bullet {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--bs-border-color);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.dashboard-card-calendar {
+  background: var(--bs-tertiary-bg);
+  display: flex;
+  flex-direction: column;
+}
+.mini-calendar-month {
+  align-self: center;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 8px;
+  background: var(--bs-secondary-bg);
+  margin-bottom: 10px;
+}
+.mini-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  font-size: 11px;
+  text-align: center;
+}
+.mini-calendar .weekday {
+  font-weight: 700;
+  color: var(--bs-secondary-color);
+  padding-bottom: 4px;
+}
+.mini-calendar .day {
+  padding: 4px 0;
+  border-radius: 6px;
+  color: var(--bs-secondary-color);
+}
+.mini-calendar .day.other-month {
+  opacity: 0.35;
+}
+.mini-calendar .day.today {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-3));
+  color: #fff;
+  font-weight: 700;
+}
+
+.dashboard-illustration {
+  margin-top: auto;
+  text-align: center;
+  font-size: 64px;
+  padding-top: 12px;
+}
+
+.dashboard-card-progress {
+  background: #4b4a5e;
+  color: #fff;
+  text-align: center;
+}
+[data-bs-theme="light"] .dashboard-card-progress {
+  background: #ece6f4;
+  color: #281d16;
+}
+
+.progress-ring-lg {
+  width: 150px;
+  height: 150px;
+  margin: 12px auto;
+}
+.progress-ring-lg .progress-ring-track {
+  stroke-width: 10;
+}
+.progress-ring-lg .progress-ring-fill {
+  stroke-width: 10;
+  stroke: var(--accent-1);
+}
+
+.dashboard-card-streak {
+  background: #121221;
+  color: #fff;
+}
+[data-bs-theme="light"] .dashboard-card-streak {
+  background: var(--accent-1);
+  color: #fff;
+}
+
+/* ===== 6) Construcción ===== */
+.construccion-badge {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bs-secondary-color);
+  letter-spacing: 0.04em;
+}
+.construccion-art {
+  display: block;
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+  margin: 24px auto;
+}

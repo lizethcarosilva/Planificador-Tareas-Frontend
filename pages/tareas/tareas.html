@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tareas · TaskPlanning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <div id="navbar-root"></div>
+
+  <main class="container-fluid px-4 py-4 flex-grow-1">
+    <div class="row g-4">
+      <!-- Form/NuevaTarea -->
+      <aside class="col-12 col-lg-4 col-xl-3">
+        <div class="card card-form-tarea border-0 d-flex flex-column h-100">
+
+          <form id="taskForm" novalidate class="d-flex flex-column gap-3 flex-grow-1 justify-content-between">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <span class="brand-bar"></span>
+              <h2 class="fs-6 fw-semibold mb-0" style="font-size: 18px;">NUEVA TAREA</h2>
+            </div>
+  
+            
+            <div>
+              <label for="taskTitle" class="form-label form-label-title d-block">TÍTULO *</label>
+              <input id="taskTitle" name="titulo" type="text" class="form-control" placeholder="¿Qué tienes pendiente?" autocomplete="off" required>
+            </div>
+
+            <div>
+              <label for="taskDesc" class="form-label form-label-strong d-block">DESCRIPCIÓN</label>
+              <textarea id="taskDesc" name="descripcion" class="form-control" placeholder="Detalla la tarea..." rows="3"></textarea>
+            </div>
+
+            <div>
+              <label class="form-label form-label-strong d-block">PRIORIDAD</label>
+              <div class="btn-group priority-picker w-100" role="group" aria-label="Prioridad">
+                <input type="radio" class="btn-check" name="priority" id="priorityAlta" value="alta" autocomplete="off">
+                <label class="btn btn-outline-secondary priority-alta priority-btn flex-fill" for="priorityAlta">ALTA</label>
+
+                <input type="radio" class="btn-check" name="priority" id="priorityMedia" value="media" autocomplete="off" checked>
+                <label class="btn btn-outline-secondary priority-media priority-btn flex-fill" for="priorityMedia">MEDIA</label>
+
+                <input type="radio" class="btn-check" name="priority" id="priorityBaja" value="baja" autocomplete="off">
+                <label class="btn btn-outline-secondary priority-baja priority-btn flex-fill" for="priorityBaja">BAJA</label>
+              </div>
+            </div>
+
+            <div>
+              <label for="taskDate" class="form-label form-label-strong d-block">FECHA LÍMITE</label>
+              <input id="taskDate" name="fecha" type="date" class="form-control" required>
+            </div>
+
+            <div class="alert alert-danger py-2 small mb-0" id="formError" hidden></div>
+
+            <button type="submit" class="btn btn-brand">+ AGREGAR TAREA</button>
+          </form>
+        </div>
+      </aside>
+
+      <!-- TaskList/Section -->
+      <section class="col-12 col-lg-8 col-xl-9">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <span class="brand-bar"></span>
+            <h2 class="fs-6 fw-bold mb-0" style="font-size: 15px;">LISTA DE TAREAS</h2>
+            <span class="small text-body-secondary" id="taskCount" style="font-size: 11px;">0 tareas</span>
+          </div>
+
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <ul class="nav nav-pills gap-2" id="filterTabs">
+              <li class="nav-item"><button class="nav-link active" data-filter="todas" type="button">TODAS</button></li>
+              <li class="nav-item"><button class="nav-link" data-filter="alta" type="button">ALTA</button></li>
+              <li class="nav-item"><button class="nav-link" data-filter="media" type="button">MEDIA</button></li>
+              <li class="nav-item"><button class="nav-link" data-filter="baja" type="button">BAJA</button></li>
+            </ul>
+
+            <!-- Progreso: reubicado aquí, dentro de TaskList/Section -->
+            <div class="progress-widget bg-body-tertiary border d-flex align-items-center">
+              <svg class="progress-ring" viewBox="0 0 60 60">
+                <defs>
+                  <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop class="progress-gradient-start" offset="0%"></stop>
+                    <stop class="progress-gradient-end" offset="100%"></stop>
+                  </linearGradient>
+                </defs>
+                <circle class="progress-ring-track" cx="30" cy="30" r="26"></circle>
+                <circle class="progress-ring-fill" id="progressRingFill" cx="30" cy="30" r="26"></circle>
+              </svg>
+              <div class="lh-sm">
+                <p class="progress-pct mb-0" id="progressPct">0%</p>
+                <p class="small text-body-secondary mb-0" style="font-size: 10px;">progreso total</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="task-summary-bar bg-body-tertiary border d-flex flex-wrap align-items-center mb-3" style="font-size: 11px;">
+          <span class="d-flex align-items-center gap-2"><span class="dot dot-alta"></span>ALTA — <span id="countAlta">0</span></span>
+          <span class="d-flex align-items-center gap-2"><span class="dot dot-media"></span>MEDIA — <span id="countMedia">0</span></span>
+          <span class="d-flex align-items-center gap-2"><span class="dot dot-baja"></span>BAJA — <span id="countBaja">0</span></span>
+          <span class="ms-md-auto" id="completedRatio">0/0 completadas</span>
+        </div>
+
+        <div class="d-flex flex-column gap-2" id="taskList"></div>
+
+        <p class="text-center text-body-secondary small py-4" id="emptyState" hidden>No hay tareas en esta categoría.</p>
+
+        <nav aria-label="Paginación de tareas" class="mt-3">
+          <ul class="pagination justify-content-center" id="pagination"></ul>
+        </nav>
+      </section>
+    </div>
+  </main>
+
+  <div id="footer-root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../Components/auth.js"></script>
+  <script src="../../Components/navbar.js"></script>
+  <script src="../../Components/footer.js"></script>
+  <script>
+    if (!Auth.getUser()) {
+      window.location.replace("../inicio-sesion/inicio-sesion.html");
+    } else {
+      Promise.all([Components.mountNavbar("tareas"), Components.mountFooter()]).then(() => {
+        const tareasScript = document.createElement("script");
+        tareasScript.src = "tareas.js";
+        document.body.appendChild(tareasScript);
+      });
+    }
+  </script>
+</body>
+</html>

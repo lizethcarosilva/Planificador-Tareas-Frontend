@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Planificador de Tareas</title>
+  <script src="Components/auth.js"></script>
+</head>
+<body>
+  <p>Redirigiendo…</p>
+  <script>
+    window.location.replace(Auth.getUser() ? "pages/tareas/tareas.html" : "pages/inicio-sesion/inicio-sesion.html");
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<nav class="navbar navbar-expand-lg sticky-top border-bottom bg-body-tertiary">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="../tareas/tareas.html">
+      <span class="logo-wrap">
+        <img class="logo-crop sponsor-logo-dark" src="../../Assets/Images/logo-dark.png" alt="Logo Planificador de Tareas">
+        <img class="logo-fit sponsor-logo-light" src="../../Assets/Images/logo-light.png" alt="Logo Planificador de Tareas">
+      </span>
+    <span class="text-brand-accent">TaskPlanning</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menú">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav me-auto mb-3 mb-lg-0 gap-lg-1">
+        <li class="nav-item"><a class="nav-link" data-nav-key="dashboard" href="../dashboard/dashboard.html">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" data-nav-key="tareas" href="../tareas/tareas.html">Tareas</a></li>
+        <li class="nav-item"><a class="nav-link" data-nav-key="calendario" href="../calendario/calendario.html">Calendario</a></li>
+        <li class="nav-item"><a class="nav-link" data-nav-key="reportes" href="../reportes/reportes.html">Reportes</a></li>
+      </ul>
+
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <span class="badge rounded-pill border bg-body-tertiary text-body fw-normal">
+          <span class="dot dot-baja"></span>
+          Completadas <span id="statCompleted">0</span>
+        </span>
+        <span class="badge rounded-pill border bg-body-tertiary text-body fw-normal">
+          <span class="dot dot-alta"></span>
+          Pendientes <span id="statPending">0</span>
+        </span>
+
+        <div class="form-check form-switch mb-0 ms-2">
+          <input class="form-check-input" type="checkbox" role="switch" id="themeToggle" aria-label="Cambiar a modo claro">
+        </div>
+
+        <div class="dropdown ms-2">
+          <button class="btn d-flex align-items-center gap-2 border bg-body-tertiary rounded-3 px-2 py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="avatar-brand" id="navUserInitial">L</span>
+            <span class="fw-bold small d-none d-md-inline" id="navUserName">Invitado</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><span class="dropdown-item-text small text-body-secondary" id="navUserEmail"></span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><button class="dropdown-item" id="logoutBtn" type="button">Cerrar sesión</button></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
