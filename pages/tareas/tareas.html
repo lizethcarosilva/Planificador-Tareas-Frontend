@@ -37,17 +37,14 @@
             </div>
 
             <div>
-              <label class="form-label form-label-strong d-block">PRIORIDAD</label>
-              <div class="btn-group priority-picker w-100" role="group" aria-label="Prioridad">
-                <input type="radio" class="btn-check" name="priority" id="priorityAlta" value="alta" autocomplete="off">
-                <label class="btn btn-outline-secondary priority-alta priority-btn flex-fill" for="priorityAlta">ALTA</label>
-
-                <input type="radio" class="btn-check" name="priority" id="priorityMedia" value="media" autocomplete="off" checked>
-                <label class="btn btn-outline-secondary priority-media priority-btn flex-fill" for="priorityMedia">MEDIA</label>
-
-                <input type="radio" class="btn-check" name="priority" id="priorityBaja" value="baja" autocomplete="off">
-                <label class="btn btn-outline-secondary priority-baja priority-btn flex-fill" for="priorityBaja">BAJA</label>
-              </div>
+              <label for="taskStatus" class="form-label form-label-strong d-block">ESTADO *</label>
+              <select id="taskStatus" name="status" class="form-select" required>
+                <option value="" disabled selected>Selecciona un estado</option>
+                <option value="PENDIENTE">PENDIENTE</option>
+                <option value="EN PROGRESO">EN PROGRESO</option>
+                <option value="REVISIÓN">REVISIÓN</option>
+                <option value="HECHO">HECHO</option>
+              </select>
             </div>
 
             <div>
@@ -73,10 +70,11 @@
 
           <div class="d-flex flex-wrap align-items-center gap-3">
             <ul class="nav nav-pills gap-2" id="filterTabs">
-              <li class="nav-item"><button class="nav-link active" data-filter="todas" type="button">TODAS</button></li>
-              <li class="nav-item"><button class="nav-link" data-filter="alta" type="button">ALTA</button></li>
-              <li class="nav-item"><button class="nav-link" data-filter="media" type="button">MEDIA</button></li>
-              <li class="nav-item"><button class="nav-link" data-filter="baja" type="button">BAJA</button></li>
+              <li class="nav-item"><button class="nav-link active" data-filter="todos" type="button">TODOS</button></li>
+              <li class="nav-item"><button class="nav-link" data-filter="PENDIENTE" type="button">PENDIENTE</button></li>
+              <li class="nav-item"><button class="nav-link" data-filter="EN PROGRESO" type="button">EN PROGRESO</button></li>
+              <li class="nav-item"><button class="nav-link" data-filter="REVISIÓN" type="button">REVISIÓN</button></li>
+              <li class="nav-item"><button class="nav-link" data-filter="HECHO" type="button">HECHO</button></li>
             </ul>
 
             <!-- Progreso -->
@@ -127,17 +125,17 @@
           <div class="col-6 col-md-3">
             <div class="card border-0 bg-body-tertiary h-100">
               <div class="card-body py-3 px-3">
-                <div class="small text-body-secondary">Prioridad alta</div>
-                <div class="fw-bold fs-5 text-danger" id="summaryAlta">0</div>
+                <div class="small text-body-secondary">En Progreso</div>
+                <div class="fw-bold fs-5 text-info" id="summaryAlta">0</div>
               </div>
             </div>
           </div>
         </div>
 
         <div class="task-summary-bar bg-body-tertiary border d-flex flex-wrap align-items-center mb-3" style="font-size: 11px;">
-          <span class="d-flex align-items-center gap-2"><span class="dot dot-alta"></span>ALTA — <span id="countAlta">0</span></span>
-          <span class="d-flex align-items-center gap-2"><span class="dot dot-media"></span>MEDIA — <span id="countMedia">0</span></span>
-          <span class="d-flex align-items-center gap-2"><span class="dot dot-baja"></span>BAJA — <span id="countBaja">0</span></span>
+          <span class="d-flex align-items-center gap-2"><span class="dot dot-alta"></span>EN PROGRESO — <span id="countAlta">0</span></span>
+          <span class="d-flex align-items-center gap-2"><span class="dot dot-media"></span>REVISIÓN — <span id="countMedia">0</span></span>
+          <span class="d-flex align-items-center gap-2"><span class="dot dot-baja"></span>PENDIENTE — <span id="countBaja">0</span></span>
           <span class="ms-md-auto" id="completedRatio">0/0 completadas</span>
         </div>
 

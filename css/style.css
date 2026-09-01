@@ -386,6 +386,32 @@ body {
   min-height: 72px;
 }
 
+.card-form-tarea .form-select {
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 13px;
+  background-color: white;
+  border: 1px solid rgba(40, 76, 115, 0.35);
+}
+[data-bs-theme="dark"] .card-form-tarea .form-select {
+  background-color: rgba(124, 58, 237, 0.14) !important;
+  background-image: none !important;
+  border-color: rgba(124, 58, 237, 0.32);
+  color: var(--bs-body-color);
+}
+[data-bs-theme="dark"] .card-form-tarea .form-select option {
+  background-color: #1a1a2e;
+  color: #f0f0ff;
+}
+[data-bs-theme="dark"] .card-form-tarea .form-select option:checked {
+  background: linear-gradient(#7c3aed, #7c3aed);
+  background-color: #7c3aed !important;
+}
+.card-form-tarea .form-select:focus {
+  border-color: var(--accent-1);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--accent-1) 25%, transparent);
+}
+
 .priority-btn {
   height: 34px;
   border-radius: 10px !important;

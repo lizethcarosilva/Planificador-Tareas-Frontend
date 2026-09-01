@@ -54,19 +54,19 @@
   }
 
   const seedTasks = () => [
-    { id: 1, title: "Comprar materiales", desc: "Revisar la lista y comprar los materiales necesarios para la semana.", priority: "alta", date: toISODateTime(1, 9, 30), done: true },
-    { id: 2, title: "Preparar presentación", desc: "Crear la presentación del avance del proyecto y revisar los datos clave.", priority: "media", date: toISODateTime(2, 15, 0), done: false },
-    { id: 3, title: "Entrenar rutina", desc: "Completar la sesión de cardio y fuerza del día.", priority: "alta", date: toISODateTime(3, 18, 0), done: false },
-    { id: 4, title: "Leer capítulo", desc: "Leer 20 páginas del libro recomendado y resumir 3 ideas clave.", priority: "baja", date: toISODateTime(4, 21, 30), done: false },
-    { id: 5, title: "Finalizar informe", desc: "Cerrar el informe mensual con resultados y próximos pasos.", priority: "alta", date: toISODateTime(5, 13, 0), done: false },
-    { id: 6, title: "Organizar escritorio", desc: "Ordenar archivos y dejar el espacio de trabajo listo para la semana.", priority: "media", date: toISODateTime(6, 11, 0), done: false },
-    { id: 7, title: "Revisar viaje", desc: "Confirmar hospedaje y preparar el itinerario del fin de semana.", priority: "media", date: toISODateTime(7, 10, 15), done: true },
-    { id: 8, title: "Ver documental", desc: "Ver un documental corto sobre productividad y organización.", priority: "baja", date: toISODateTime(8, 20, 0), done: false },
+    { id: 1, title: "Comprar materiales", desc: "Revisar la lista y comprar los materiales necesarios para la semana.", status: "HECHO", date: toISODateTime(1, 9, 30) },
+    { id: 2, title: "Preparar presentación", desc: "Crear la presentación del avance del proyecto y revisar los datos clave.", status: "PENDIENTE", date: toISODateTime(2, 15, 0) },
+    { id: 3, title: "Entrenar rutina", desc: "Completar la sesión de cardio y fuerza del día.", status: "EN PROGRESO", date: toISODateTime(3, 18, 0) },
+    { id: 4, title: "Leer capítulo", desc: "Leer 20 páginas del libro recomendado y resumir 3 ideas clave.", status: "PENDIENTE", date: toISODateTime(4, 21, 30) },
+    { id: 5, title: "Finalizar informe", desc: "Cerrar el informe mensual con resultados y próximos pasos.", status: "REVISIÓN", date: toISODateTime(5, 13, 0) },
+    { id: 6, title: "Organizar escritorio", desc: "Ordenar archivos y dejar el espacio de trabajo listo para la semana.", status: "EN PROGRESO", date: toISODateTime(6, 11, 0) },
+    { id: 7, title: "Revisar viaje", desc: "Confirmar hospedaje y preparar el itinerario del fin de semana.", status: "HECHO", date: toISODateTime(7, 10, 15) },
+    { id: 8, title: "Ver documental", desc: "Ver un documental corto sobre productividad y organización.", status: "PENDIENTE", date: toISODateTime(8, 20, 0) },
   ];
 
   const state = {
     tasks: loadTasks(),
-    filter: "todas",
+    filter: "todos",
     page: 1,
   };
 
@@ -76,9 +76,18 @@
   function loadTasks() {
     try {
       const raw = localStorage.getItem(STORAGE_TASKS);
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // Detectar estructura antigua (con "done" en lugar de "status")
+        if (parsed.length > 0 && parsed[0].hasOwnProperty("done") && !parsed[0].hasOwnProperty("status")) {
+          localStorage.removeItem(STORAGE_TASKS);
+          return seedTasks();
+        }
+        return parsed;
+      }
     } catch (e) {
       /* ignore corrupt storage */
+      localStorage.removeItem(STORAGE_TASKS);
     }
     return seedTasks();
   }
@@ -94,9 +103,7 @@
       name: task.title,
       description: task.desc || "",
       dueDate: task.date || "",
-      status: task.done ? "COMPLETADA" : "PORHACER",
-      priority: task.priority,
-      done: Boolean(task.done),
+      status: task.status || "PENDIENTE",
     }));
 
     window.taskManager.currentId = window.taskManager.tasks.reduce((maxId, task) => {
@@ -109,9 +116,7 @@
     state.tasks = [...state.tasks].sort((a, b) => {
       const dateA = a.date ? new Date(a.date).getTime() : Number.MAX_SAFE_INTEGER;
       const dateB = b.date ? new Date(b.date).getTime() : Number.MAX_SAFE_INTEGER;
-      if (dateA !== dateB) return dateA - dateB;
-      const priorityOrder = { alta: 0, media: 1, baja: 2 };
-      return (priorityOrder[a.priority] ?? 99) - (priorityOrder[b.priority] ?? 99);
+      return dateA - dateB;
     });
   }
 
@@ -152,25 +157,25 @@
   const form = document.getElementById("taskForm");
   const titleInput = document.getElementById("taskTitle");
   const descInput = document.getElementById("taskDesc");
+  const statusSelect = document.getElementById("taskStatus");
   const dateInput = document.getElementById("taskDate");
   const formError = document.getElementById("formError");
 
   function validFormFieldInput(data) {
     if (!data.title) return "El título de la tarea no puede estar vacío.";
+    if (!data.status) return "Debes seleccionar un estado.";
     if (!data.date) return "Debes seleccionar una fecha de entrega.";
-    if (!data.priority) return "Debes seleccionar una prioridad.";
     return null;
   }
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const checkedPriority = form.querySelector('input[name="priority"]:checked');
     const data = {
       title: titleInput.value.trim(),
       desc: descInput.value.trim(),
+      status: statusSelect.value,
       date: dateInput.value,
-      priority: checkedPriority ? checkedPriority.value : "",
     };
 
     const errorMessage = validFormFieldInput(data);
@@ -181,47 +186,29 @@
     }
     formError.hidden = true;
 
-    const createdTask = window.taskManager.addTask(data.title, data.desc, data.date, "PORHACER");
+    const createdTask = window.taskManager.addTask(data.title, data.desc, data.date, data.status);
 
     state.tasks.push({
       id: createdTask.id,
       title: data.title,
       desc: data.desc,
-      priority: data.priority,
+      status: data.status,
       date: data.date,
-      done: false,
-      status: createdTask.status,
     });
 
     sortTasks();
     saveTasks();
     form.reset();
 
-    state.filter = "todas";
-    [...filterTabs.querySelectorAll(".nav-link")].forEach((b) => b.classList.toggle("active", b.dataset.filter === "todas"));
+    state.filter = "todos";
+    [...filterTabs.querySelectorAll(".nav-link")].forEach((b) => b.classList.toggle("active", b.dataset.filter === "todos"));
     state.page = Math.max(1, Math.ceil(state.tasks.length / PAGE_SIZE));
     render();
   });
 
   const taskListEl = document.getElementById("taskList");
   taskListEl.addEventListener("click", (e) => {
-    const checkBtn = e.target.closest(".task-check");
     const delBtn = e.target.closest(".task-delete");
-
-    if (checkBtn) {
-      const id = Number(checkBtn.dataset.id);
-      const task = state.tasks.find((t) => t.id === id);
-      if (task) {
-        task.done = !task.done;
-        const managerTask = window.taskManager.tasks.find((item) => item.id === task.id);
-        if (managerTask) {
-          managerTask.status = task.done ? "COMPLETADA" : "PORHACER";
-        }
-        saveTasks();
-        render();
-      }
-      return;
-    }
 
     if (delBtn) {
       const id = Number(delBtn.dataset.id);
@@ -245,23 +232,29 @@
   });
 
   function getFilteredTasks() {
-    if (state.filter === "todas") return state.tasks;
-    return state.tasks.filter((t) => t.priority === state.filter);
+    if (state.filter === "todos") return state.tasks;
+    return state.tasks.filter((t) => t.status === state.filter);
   }
 
   function renderTaskCard(task) {
+    const statusColors = {
+      "PENDIENTE": "text-bg-warning",
+      "EN PROGRESO": "text-bg-info",
+      "REVISIÓN": "text-bg-secondary",
+      "HECHO": "text-bg-success"
+    };
+    const statusColor = statusColors[task.status] || "text-bg-secondary";
+    
     return `
-      <div class="card task-card priority-${task.priority} ${task.done ? "is-done" : ""}" data-id="${task.id}">
+      <div class="card task-card" data-id="${task.id}">
         <div class="card-body d-flex gap-3">
-          <button class="task-check" data-id="${task.id}" aria-label="Marcar como completada">${task.done ? "✓" : ""}</button>
           <div class="flex-grow-1">
             <div class="d-flex align-items-center gap-2 flex-wrap">
               <p class="task-title fw-bold mb-0">${escapeHtml(task.title)}</p>
-              <span class="badge rounded-pill badge-${task.priority}">${task.priority.toUpperCase()}</span>
-              <span class="badge rounded-pill ${task.done ? "text-bg-success" : "text-bg-secondary"}">${task.done ? "Completada" : "Pendiente"}</span>
+              <span class="badge rounded-pill ${statusColor}">${task.status}</span>
             </div>
             ${task.desc ? `<p class="task-desc small mb-1 mt-1">${escapeHtml(task.desc)}</p>` : ""}
-            ${task.date ? `<p class="small text-body-secondary mb-0">${formatDate(task.date)}</p>` : ""}
+            ${task.date ? `<p class="small text-body-secondary mb-0 mt-2">${formatDate(task.date)}</p>` : ""}
           </div>
           <button class="task-delete" data-id="${task.id}" aria-label="Eliminar tarea">×</button>
         </div>
@@ -299,11 +292,10 @@
 
   function render() {
     const total = state.tasks.length;
-    const completed = state.tasks.filter((t) => t.done).length;
-    const pending = total - completed;
-    const countAlta = state.tasks.filter((t) => t.priority === "alta").length;
-    const countMedia = state.tasks.filter((t) => t.priority === "media").length;
-    const countBaja = state.tasks.filter((t) => t.priority === "baja").length;
+    const completed = state.tasks.filter((t) => t.status === "HECHO").length;
+    const pending = state.tasks.filter((t) => t.status === "PENDIENTE").length;
+    const inProgress = state.tasks.filter((t) => t.status === "EN PROGRESO").length;
+    const inReview = state.tasks.filter((t) => t.status === "REVISIÓN").length;
 
     const totalEl = document.getElementById("summaryTotal");
     const completedEl = document.getElementById("summaryCompleted");
@@ -313,14 +305,14 @@
     if (totalEl) totalEl.textContent = total;
     if (completedEl) completedEl.textContent = completed;
     if (pendingEl) pendingEl.textContent = pending;
-    if (altaEl) altaEl.textContent = countAlta;
+    if (altaEl) altaEl.textContent = inProgress;
 
     const countAltaEl = document.getElementById("countAlta");
     const countMediaEl = document.getElementById("countMedia");
     const countBajaEl = document.getElementById("countBaja");
-    if (countAltaEl) countAltaEl.textContent = countAlta;
-    if (countMediaEl) countMediaEl.textContent = countMedia;
-    if (countBajaEl) countBajaEl.textContent = countBaja;
+    if (countAltaEl) countAltaEl.textContent = inProgress;
+    if (countMediaEl) countMediaEl.textContent = inReview;
+    if (countBajaEl) countBajaEl.textContent = pending;
 
     const completedRatioEl = document.getElementById("completedRatio");
     if (completedRatioEl) completedRatioEl.textContent = `${completed}/${total} completadas`;
