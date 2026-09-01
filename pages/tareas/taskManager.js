@@ -1,19 +1,67 @@
 (() => {
   "use strict";
 
+  class TaskManager {
+    constructor(currentId = 0) {
+      this.tasks = [];
+      this.currentId = currentId;
+    }
+
+    addTask(name, description, dueDate, status = "PORHACER") {
+      this.currentId += 1;
+      const task = {
+        id: this.currentId,
+        name: name,
+        description: description,
+        dueDate: dueDate,
+        status: status || "PORHACER",
+      };
+
+      this.tasks.push(task);
+      return task;
+    }
+
+    deleteTask(id) {
+      const taskId = Number(id);
+      this.tasks = this.tasks.filter((task) => task.id !== taskId);
+      return this.tasks;
+    }
+
+    toggleTask(id) {
+      const taskId = Number(id);
+      const task = this.tasks.find((item) => item.id === taskId);
+      if (!task) return null;
+      task.status = task.status === "COMPLETADA" ? "PORHACER" : "COMPLETADA";
+      return task;
+    }
+  }
+
+  window.TaskManager = TaskManager;
+
   const STORAGE_TASKS = "planificador.tasks";
   const PAGE_SIZE = 4;
   const MONTHS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
+  function padDate(value) {
+    return String(value).padStart(2, "0");
+  }
+
+  function toISODateTime(offsetDays, hour, minutes = 0) {
+    const date = new Date();
+    date.setHours(hour, minutes, 0, 0);
+    date.setDate(date.getDate() + offsetDays);
+    return `${date.getFullYear()}-${padDate(date.getMonth() + 1)}-${padDate(date.getDate())}T${padDate(hour)}:${padDate(minutes)}`;
+  }
+
   const seedTasks = () => [
-    { id: 1, title: "Comprar leche", desc: "Comprar leche descremada en el supermercado.", priority: "alta", date: "2025-01-15T08:00", done: true },
-    { id: 2, title: "Estudiar Java", desc: "Repasar los capítulos 8 al 12 de colecciones.", priority: "media", date: "2025-01-16T09:00", done: false },
-    { id: 3, title: "Hacer ejercicio", desc: "Completar la rutina de cardio de 45 minutos.", priority: "alta", date: "2025-01-17T18:00", done: false },
-    { id: 4, title: "Leer libro", desc: "Leer 20 páginas del libro de desarrollo personal.", priority: "baja", date: "2025-01-18T21:00", done: false },
-    { id: 5, title: "Terminar informe", desc: "Finalizar el informe mensual de avances.", priority: "alta", date: "2025-01-19T14:00", done: false },
-    { id: 6, title: "Organizar escritorio", desc: "Ordenar documentos y limpiar el espacio de trabajo.", priority: "media", date: "2025-01-20T11:00", done: false },
-    { id: 7, title: "Planificar viaje", desc: "Definir itinerario y reservar alojamiento.", priority: "media", date: "2025-01-21T10:00", done: true },
-    { id: 8, title: "Ver documental", desc: "Ver un documental sobre productividad.", priority: "baja", date: "2025-01-22T20:00", done: false },
+    { id: 1, title: "Comprar materiales", desc: "Revisar la lista y comprar los materiales necesarios para la semana.", priority: "alta", date: toISODateTime(1, 9, 30), done: true },
+    { id: 2, title: "Preparar presentación", desc: "Crear la presentación del avance del proyecto y revisar los datos clave.", priority: "media", date: toISODateTime(2, 15, 0), done: false },
+    { id: 3, title: "Entrenar rutina", desc: "Completar la sesión de cardio y fuerza del día.", priority: "alta", date: toISODateTime(3, 18, 0), done: false },
+    { id: 4, title: "Leer capítulo", desc: "Leer 20 páginas del libro recomendado y resumir 3 ideas clave.", priority: "baja", date: toISODateTime(4, 21, 30), done: false },
+    { id: 5, title: "Finalizar informe", desc: "Cerrar el informe mensual con resultados y próximos pasos.", priority: "alta", date: toISODateTime(5, 13, 0), done: false },
+    { id: 6, title: "Organizar escritorio", desc: "Ordenar archivos y dejar el espacio de trabajo listo para la semana.", priority: "media", date: toISODateTime(6, 11, 0), done: false },
+    { id: 7, title: "Revisar viaje", desc: "Confirmar hospedaje y preparar el itinerario del fin de semana.", priority: "media", date: toISODateTime(7, 10, 15), done: true },
+    { id: 8, title: "Ver documental", desc: "Ver un documental corto sobre productividad y organización.", priority: "baja", date: toISODateTime(8, 20, 0), done: false },
   ];
 
   const state = {
@@ -21,6 +69,9 @@
     filter: "todas",
     page: 1,
   };
+
+  const taskManager = new TaskManager();
+  window.taskManager = taskManager;
 
   function loadTasks() {
     try {
@@ -34,6 +85,34 @@
 
   function saveTasks() {
     localStorage.setItem(STORAGE_TASKS, JSON.stringify(state.tasks));
+    syncTaskManagerFromState();
+  }
+
+  function syncTaskManagerFromState() {
+    window.taskManager.tasks = state.tasks.map((task) => ({
+      id: task.id,
+      name: task.title,
+      description: task.desc || "",
+      dueDate: task.date || "",
+      status: task.done ? "COMPLETADA" : "PORHACER",
+      priority: task.priority,
+      done: Boolean(task.done),
+    }));
+
+    window.taskManager.currentId = window.taskManager.tasks.reduce((maxId, task) => {
+      const id = Number(task.id) || 0;
+      return Math.max(maxId, id);
+    }, 0);
+  }
+
+  function sortTasks() {
+    state.tasks = [...state.tasks].sort((a, b) => {
+      const dateA = a.date ? new Date(a.date).getTime() : Number.MAX_SAFE_INTEGER;
+      const dateB = b.date ? new Date(b.date).getTime() : Number.MAX_SAFE_INTEGER;
+      if (dateA !== dateB) return dateA - dateB;
+      const priorityOrder = { alta: 0, media: 1, baja: 2 };
+      return (priorityOrder[a.priority] ?? 99) - (priorityOrder[b.priority] ?? 99);
+    });
   }
 
   function formatDate(isoDateTime) {
@@ -60,7 +139,6 @@
     return div.innerHTML;
   }
 
-  // ===== Filter tabs (nav-pills) =====
   const filterTabs = document.getElementById("filterTabs");
   filterTabs.addEventListener("click", (e) => {
     const btn = e.target.closest(".nav-link");
@@ -71,24 +149,16 @@
     render();
   });
 
-  // ===== Add task form =====
   const form = document.getElementById("taskForm");
   const titleInput = document.getElementById("taskTitle");
   const descInput = document.getElementById("taskDesc");
   const dateInput = document.getElementById("taskDate");
   const formError = document.getElementById("formError");
 
-  // Revisa el formulario: devuelve un mensaje de error o null si está bien.
   function validFormFieldInput(data) {
-    console.log("nombre:", data.title);
-    console.log("descripcion:", data.desc);
-    console.log("fecha:", data.date);
-    console.log("estado:", data.priority);
-
     if (!data.title) return "El título de la tarea no puede estar vacío.";
-    if (!data.desc) return "La descripción no puede estar vacía.";
     if (!data.date) return "Debes seleccionar una fecha de entrega.";
-    if (!data.priority) return "Debes seleccionar un estado.";
+    if (!data.priority) return "Debes seleccionar una prioridad.";
     return null;
   }
 
@@ -111,28 +181,28 @@
     }
     formError.hidden = true;
 
-    const newTask = {
-      id: Date.now(),
+    const createdTask = window.taskManager.addTask(data.title, data.desc, data.date, "PORHACER");
+
+    state.tasks.push({
+      id: createdTask.id,
       title: data.title,
       desc: data.desc,
       priority: data.priority,
       date: data.date,
       done: false,
-    };
+      status: createdTask.status,
+    });
 
-    state.tasks.push(newTask);
+    sortTasks();
     saveTasks();
-
     form.reset();
 
     state.filter = "todas";
     [...filterTabs.querySelectorAll(".nav-link")].forEach((b) => b.classList.toggle("active", b.dataset.filter === "todas"));
     state.page = Math.max(1, Math.ceil(state.tasks.length / PAGE_SIZE));
-
     render();
   });
 
-  // ===== Task list interactions (delegated) =====
   const taskListEl = document.getElementById("taskList");
   taskListEl.addEventListener("click", (e) => {
     const checkBtn = e.target.closest(".task-check");
@@ -143,6 +213,10 @@
       const task = state.tasks.find((t) => t.id === id);
       if (task) {
         task.done = !task.done;
+        const managerTask = window.taskManager.tasks.find((item) => item.id === task.id);
+        if (managerTask) {
+          managerTask.status = task.done ? "COMPLETADA" : "PORHACER";
+        }
         saveTasks();
         render();
       }
@@ -152,17 +226,16 @@
     if (delBtn) {
       const id = Number(delBtn.dataset.id);
       state.tasks = state.tasks.filter((t) => t.id !== id);
+      window.taskManager.deleteTask(id);
       saveTasks();
 
       const filtered = getFilteredTasks();
       const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
       state.page = Math.min(state.page, totalPages);
-
       render();
     }
   });
 
-  // ===== Pagination =====
   const paginationEl = document.getElementById("pagination");
   paginationEl.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-page]");
@@ -171,7 +244,6 @@
     render();
   });
 
-  // ===== Rendering =====
   function getFilteredTasks() {
     if (state.filter === "todas") return state.tasks;
     return state.tasks.filter((t) => t.priority === state.filter);
@@ -233,19 +305,36 @@
     const countMedia = state.tasks.filter((t) => t.priority === "media").length;
     const countBaja = state.tasks.filter((t) => t.priority === "baja").length;
 
-    document.getElementById("statCompleted").textContent = completed;
-    document.getElementById("statPending").textContent = pending;
-    document.getElementById("countAlta").textContent = countAlta;
-    document.getElementById("countMedia").textContent = countMedia;
-    document.getElementById("countBaja").textContent = countBaja;
-    document.getElementById("completedRatio").textContent = `${completed}/${total} completadas`;
-    document.getElementById("taskCount").textContent = `${total} tarea${total === 1 ? "" : "s"}`;
+    const totalEl = document.getElementById("summaryTotal");
+    const completedEl = document.getElementById("summaryCompleted");
+    const pendingEl = document.getElementById("summaryPending");
+    const altaEl = document.getElementById("summaryAlta");
+
+    if (totalEl) totalEl.textContent = total;
+    if (completedEl) completedEl.textContent = completed;
+    if (pendingEl) pendingEl.textContent = pending;
+    if (altaEl) altaEl.textContent = countAlta;
+
+    const countAltaEl = document.getElementById("countAlta");
+    const countMediaEl = document.getElementById("countMedia");
+    const countBajaEl = document.getElementById("countBaja");
+    if (countAltaEl) countAltaEl.textContent = countAlta;
+    if (countMediaEl) countMediaEl.textContent = countMedia;
+    if (countBajaEl) countBajaEl.textContent = countBaja;
+
+    const completedRatioEl = document.getElementById("completedRatio");
+    if (completedRatioEl) completedRatioEl.textContent = `${completed}/${total} completadas`;
+    const taskCountEl = document.getElementById("taskCount");
+    if (taskCountEl) taskCountEl.textContent = `${total} tarea${total === 1 ? "" : "s"}`;
 
     const pct = total === 0 ? 0 : Math.round((completed / total) * 100);
-    document.getElementById("progressPct").textContent = `${pct}%`;
+    const progressPctEl = document.getElementById("progressPct");
+    if (progressPctEl) progressPctEl.textContent = `${pct}%`;
     const ringFill = document.getElementById("progressRingFill");
-    ringFill.style.strokeDasharray = String(RING_CIRCUMFERENCE);
-    ringFill.style.strokeDashoffset = String(RING_CIRCUMFERENCE * (1 - pct / 100));
+    if (ringFill) {
+      ringFill.style.strokeDasharray = String(RING_CIRCUMFERENCE);
+      ringFill.style.strokeDashoffset = String(RING_CIRCUMFERENCE * (1 - pct / 100));
+    }
 
     const filtered = getFilteredTasks();
     const start = (state.page - 1) * PAGE_SIZE;
@@ -254,14 +343,15 @@
     const emptyState = document.getElementById("emptyState");
     if (filtered.length === 0) {
       taskListEl.innerHTML = "";
-      emptyState.hidden = false;
+      if (emptyState) emptyState.hidden = false;
     } else {
-      emptyState.hidden = true;
+      if (emptyState) emptyState.hidden = true;
       taskListEl.innerHTML = pageItems.map(renderTaskCard).join("");
     }
 
     renderPagination(filtered.length);
   }
 
+  syncTaskManagerFromState();
   render();
 })();

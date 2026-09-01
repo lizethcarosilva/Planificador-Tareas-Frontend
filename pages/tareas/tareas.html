@@ -23,10 +23,9 @@
           <form id="taskForm" novalidate class="d-flex flex-column gap-3 flex-grow-1 justify-content-between">
             <div class="d-flex align-items-center gap-2 mb-3">
               <span class="brand-bar"></span>
-              <h2 class="fs-6 fw-semibold mb-0" style="font-size: 18px;">NUEVA TAREA</h2>
+              <h2 class="fs-6 fw-semibold mb-0" style="font-size: 18px;">CREAR TAREA</h2>
             </div>
-  
-            
+
             <div>
               <label for="taskTitle" class="form-label form-label-title d-block">TÍTULO *</label>
               <input id="taskTitle" name="titulo" type="text" class="form-control" placeholder="¿Qué tienes pendiente?" autocomplete="off" required>
@@ -68,7 +67,7 @@
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
           <div class="d-flex align-items-center gap-2">
             <span class="brand-bar"></span>
-            <h2 class="fs-6 fw-bold mb-0" style="font-size: 15px;">LISTA DE TAREAS</h2>
+            <h2 class="fs-6 fw-bold mb-0" style="font-size: 15px;">GESTIÓN DE TAREAS</h2>
             <span class="small text-body-secondary" id="taskCount" style="font-size: 11px;">0 tareas</span>
           </div>
 
@@ -100,6 +99,41 @@
           </div>
         </div>
 
+        <div class="row g-2 mb-3">
+          <div class="col-6 col-md-3">
+            <div class="card border-0 bg-body-tertiary h-100">
+              <div class="card-body py-3 px-3">
+                <div class="small text-body-secondary">Total</div>
+                <div class="fw-bold fs-5" id="summaryTotal">0</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card border-0 bg-body-tertiary h-100">
+              <div class="card-body py-3 px-3">
+                <div class="small text-body-secondary">Completadas</div>
+                <div class="fw-bold fs-5 text-success" id="summaryCompleted">0</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card border-0 bg-body-tertiary h-100">
+              <div class="card-body py-3 px-3">
+                <div class="small text-body-secondary">Pendientes</div>
+                <div class="fw-bold fs-5 text-warning" id="summaryPending">0</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card border-0 bg-body-tertiary h-100">
+              <div class="card-body py-3 px-3">
+                <div class="small text-body-secondary">Prioridad alta</div>
+                <div class="fw-bold fs-5 text-danger" id="summaryAlta">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="task-summary-bar bg-body-tertiary border d-flex flex-wrap align-items-center mb-3" style="font-size: 11px;">
           <span class="d-flex align-items-center gap-2"><span class="dot dot-alta"></span>ALTA — <span id="countAlta">0</span></span>
           <span class="d-flex align-items-center gap-2"><span class="dot dot-media"></span>MEDIA — <span id="countMedia">0</span></span>
@@ -124,15 +158,12 @@
   <script src="../../Components/auth.js"></script>
   <script src="../../Components/navbar.js"></script>
   <script src="../../Components/footer.js"></script>
+  <script src="taskManager.js"></script>
   <script>
     if (!Auth.getUser()) {
       window.location.replace("../inicio-sesion/inicio-sesion.html");
     } else {
-      Promise.all([Components.mountNavbar("tareas"), Components.mountFooter()]).then(() => {
-        const tareasScript = document.createElement("script");
-        tareasScript.src = "tareas.js";
-        document.body.appendChild(tareasScript);
-      });
+      Promise.all([Components.mountNavbar("tareas"), Components.mountFooter()]);
     }
   </script>
 </body>
