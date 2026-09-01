@@ -2,7 +2,7 @@
 
 Aplicación web para organizar tareas por prioridad y fecha límite, con lista de tareas, filtros, progreso y modo claro/oscuro. Construida con HTML5, Bootstrap 5 y JavaScript.
 
-**Demo:** `lizethcaro@correo.com` / contraseña `12345`
+**Demo:** Usuario: `lizethcaro@correo.com` / Contraseña: `12345`
 
 ## Trello
 https://trello.com/invite/b/6a6bafa47387a9179a082360/ATTI5534cebbd55f283861e5a872262911ea35FD4359/planificador-tareas
@@ -13,5 +13,3 @@ https://www.figma.com/design/UGLtTzDty5nqubgh0xztXJ/Planificador-de-Tareas?node-
 ## Demo publicada
 https://lizethcarosilva.github.io/Planificador-Tareas-Frontend/
 
-Usuario: lizethcaro@correo.com
-Contraseña: 12345
