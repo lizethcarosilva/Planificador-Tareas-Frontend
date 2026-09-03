@@ -80,13 +80,33 @@ body {
 }
 
 .dot-alta {
-  background: var(--priority-alta);
+  background: rgb(13, 202, 240);
 }
 .dot-media {
-  background: var(--priority-media);
+  background: rgb(255, 193, 7);
 }
 .dot-baja {
-  background: var(--priority-baja);
+  background: #FF3B64;
+}
+.dot-hecho {
+  background: rgb(25, 135, 84);
+}
+
+.status-pendiente {
+  background-color: #FF3B64;
+  color: #fff;
+}
+.status-progreso {
+  background-color: rgb(13, 202, 240);
+  color: #000;
+}
+.status-revision {
+  background-color: rgb(255, 193, 7);
+  color: #000;
+}
+.status-hecho {
+  background-color: rgb(25, 135, 84);
+  color: #fff;
 }
 
 .badge-alta {
@@ -284,6 +304,37 @@ body {
 }
 .task-delete:hover {
   color: var(--priority-alta);
+}
+
+/* Acción para avanzar la tarea: los acentos cambian automáticamente
+   entre los temas claro y oscuro mediante las variables de marca. */
+.done-button {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  min-width: 132px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.done-button:hover:not(:disabled),
+.done-button:focus-visible:not(:disabled) {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+  filter: brightness(1.08);
+}
+
+.done-button:disabled {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+  opacity: 0.55;
 }
 
 /* Anillo de progreso (SVG) */

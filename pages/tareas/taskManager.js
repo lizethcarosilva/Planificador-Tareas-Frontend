@@ -27,6 +27,20 @@
       return this.tasks;
     }
 
+    getTaskById(taskId) {
+      const id = Number(taskId);
+      let foundTask;
+
+      for (const task of this.tasks) {
+        if (task.id === id) {
+          foundTask = task;
+          break;
+        }
+      }
+
+      return foundTask;
+    }
+
     toggleTask(id) {
       const taskId = Number(id);
       const task = this.tasks.find((item) => item.id === taskId);
@@ -40,6 +54,13 @@
 
   const STORAGE_TASKS = "planificador.tasks";
   const PAGE_SIZE = 4;
+  const NEXT_STATUS = {
+    "PENDIENTE": "EN PROGRESO",
+    "EN PROGRESO": "REVISIÓN",
+    "REVISIÓN": "HECHO",
+    "HECHO": "HECHO",
+    "DONE": "HECHO",
+  };
   const MONTHS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
   function padDate(value) {
@@ -208,7 +229,25 @@
 
   const taskListEl = document.getElementById("taskList");
   taskListEl.addEventListener("click", (e) => {
+    const doneBtn = e.target.closest(".done-button");
     const delBtn = e.target.closest(".task-delete");
+
+    if (doneBtn) {
+      const parentTask = doneBtn.closest("[data-task-id]");
+      if (!parentTask) return;
+
+      const taskId = Number(parentTask.dataset.taskId);
+      const task = taskManager.getTaskById(taskId);
+      const stateTask = state.tasks.find((item) => item.id === taskId);
+      if (!task || !stateTask) return;
+
+      const nextStatus = NEXT_STATUS[stateTask.status] || "PENDIENTE";
+      task.status = nextStatus;
+      stateTask.status = nextStatus;
+      saveTasks();
+      taskManager.render();
+      return;
+    }
 
     if (delBtn) {
       const id = Number(delBtn.dataset.id);
@@ -238,15 +277,16 @@
 
   function renderTaskCard(task) {
     const statusColors = {
-      "PENDIENTE": "text-bg-warning",
-      "EN PROGRESO": "text-bg-info",
-      "REVISIÓN": "text-bg-secondary",
-      "HECHO": "text-bg-success"
+      "PENDIENTE": "status-pendiente",
+      "EN PROGRESO": "status-progreso",
+      "REVISIÓN": "status-revision",
+      "HECHO": "status-hecho",
+      "DONE": "status-hecho"
     };
-    const statusColor = statusColors[task.status] || "text-bg-secondary";
+    const statusColor = statusColors[task.status] || "status-revision";
     
     return `
-      <div class="card task-card" data-id="${task.id}">
+      <div class="card task-card" data-task-id="${task.id}">
         <div class="card-body d-flex gap-3">
           <div class="flex-grow-1">
             <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -256,6 +296,9 @@
             ${task.desc ? `<p class="task-desc small mb-1 mt-1">${escapeHtml(task.desc)}</p>` : ""}
             ${task.date ? `<p class="small text-body-secondary mb-0 mt-2">${formatDate(task.date)}</p>` : ""}
           </div>
+          <button class="done-button btn" type="button" ${task.status === "HECHO" ? "disabled" : ""}>
+            ${task.status === "HECHO" ? "Hecho" : "Avanzar estado"}
+          </button>
           <button class="task-delete" data-id="${task.id}" aria-label="Eliminar tarea">×</button>
         </div>
       </div>
@@ -292,27 +335,19 @@
 
   function render() {
     const total = state.tasks.length;
-    const completed = state.tasks.filter((t) => t.status === "HECHO").length;
+    const completed = state.tasks.filter((t) => t.status === "HECHO" || t.status === "DONE").length;
     const pending = state.tasks.filter((t) => t.status === "PENDIENTE").length;
     const inProgress = state.tasks.filter((t) => t.status === "EN PROGRESO").length;
     const inReview = state.tasks.filter((t) => t.status === "REVISIÓN").length;
 
-    const totalEl = document.getElementById("summaryTotal");
-    const completedEl = document.getElementById("summaryCompleted");
-    const pendingEl = document.getElementById("summaryPending");
-    const altaEl = document.getElementById("summaryAlta");
-
-    if (totalEl) totalEl.textContent = total;
-    if (completedEl) completedEl.textContent = completed;
-    if (pendingEl) pendingEl.textContent = pending;
-    if (altaEl) altaEl.textContent = inProgress;
-
     const countAltaEl = document.getElementById("countAlta");
     const countMediaEl = document.getElementById("countMedia");
     const countBajaEl = document.getElementById("countBaja");
+    const countHechoEl = document.getElementById("countHecho");
     if (countAltaEl) countAltaEl.textContent = inProgress;
     if (countMediaEl) countMediaEl.textContent = inReview;
     if (countBajaEl) countBajaEl.textContent = pending;
+    if (countHechoEl) countHechoEl.textContent = completed;
 
     const completedRatioEl = document.getElementById("completedRatio");
     if (completedRatioEl) completedRatioEl.textContent = `${completed}/${total} completadas`;
@@ -345,5 +380,6 @@
   }
 
   syncTaskManagerFromState();
+  window.taskManager.render = render;
   render();
 })();
