@@ -1,4 +1,3 @@
-/* ===== 1) Colores de marca por tema ===== */
 :root,
 [data-bs-theme="light"] {
   --accent-1: #284c73;
@@ -56,7 +55,7 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* ===== 2) Utilidades de marca ===== */
+
 .brand-bar {
   width: 4px;
   height: 22px;
@@ -134,7 +133,7 @@ body {
   background: var(--priority-baja) !important;
 }
 
-/* logo-dark.png es grande y se recorta; logo-light.png ya viene del tamaño correcto */
+
 .logo-wrap {
   width: 40px;
   height: 40px;
@@ -211,7 +210,7 @@ body {
   color: var(--accent-1) !important;
 }
 
-/* Avatar con degradado de marca */
+
 .avatar-brand {
   width: 30px;
   height: 30px;
@@ -225,8 +224,7 @@ body {
   background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
 }
 
-/* Interruptor de tema: es un form-check form-switch de Bootstrap,
-   solo coloreamos la bolita cuando está activo. */
+
 #themeToggle {
   cursor: pointer;
 }
@@ -236,8 +234,7 @@ body {
   border-color: var(--accent-1);
 }
 
-/* Selector de PRIORIDAD: grupo de botones con btn-check por debajo,
-   cada label se colorea según la prioridad cuando está seleccionada. */
+
 .priority-btn {
   font-size: 10px;
   font-weight: 700;
@@ -262,8 +259,7 @@ body {
   color: #fff;
 }
 
-/* Pestañas de filtro (TODAS/ALTA/MEDIA/BAJA): nav-pills de Bootstrap,
-   con degradado de marca en la pestaña activa. */
+
 #filterTabs .nav-link {
   font-size: 10px;
   font-weight: 700;
@@ -275,7 +271,7 @@ body {
   color: #fff;
 }
 
-/* Borde completo de la tarjeta teñido según la prioridad */
+
 .task-card.priority-alta {
   border-color: color-mix(in srgb, var(--priority-alta) 20%, transparent);
 }
@@ -337,8 +333,7 @@ body {
   color: var(--priority-alta);
 }
 
-/* Acción para avanzar la tarea: los acentos cambian automáticamente
-   entre los temas claro y oscuro mediante las variables de marca. */
+
 .done-button {
   align-self: center;
   display: inline-flex;
@@ -368,7 +363,7 @@ body {
   opacity: 0.55;
 }
 
-/* Anillo de progreso (SVG) */
+
 .progress-ring {
   width: 44px;
   height: 44px;
@@ -383,7 +378,7 @@ body {
 
 .progress-ring-fill {
   fill: none;
-  /* el degradado está definido en el <linearGradient> del SVG */
+
   stroke: url(#progressGradient);
   stroke-width: 5;
   stroke-linecap: round;
@@ -398,7 +393,7 @@ body {
   stop-color: var(--accent-2);
 }
 
-/* Paginación con degradado de marca en la página activa */
+
 .pagination .page-item.active .page-link {
   background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
   border-color: transparent;
@@ -409,14 +404,12 @@ body {
   color: var(--bs-body-color);
 }
 
-/* Página de marcador de posición (Dashboard/Calendario/Reportes) */
+
 .placeholder-main {
   min-height: 60vh;
 }
 
-/* ===== 3) Medidas exactas del diseño de Figma (página Tareas) ===== */
 
-/* Navbar: alto 68px, separación logo-nombre 14px */
 .navbar {
   min-height: 68px;
 }
@@ -425,7 +418,7 @@ body {
   gap: 14px !important;
 }
 
-/* Tarjeta "NUEVA TAREA" */
+
 .card-form-tarea {
 
   height: 100%;
@@ -526,7 +519,7 @@ body {
   font-size: 14px;
 }
 
-/* Widget de progreso (ahora vive en TaskList/Section, no en el formulario) */
+
 .progress-widget {
   border-radius: 12px;
   padding: 10px 16px;
@@ -551,20 +544,20 @@ body {
   line-height: 1;
 }
 
-/* Encabezado de LISTA DE TAREAS */
+
 #filterTabs .nav-link {
   border-radius: 100px;
   padding: 6px 14px;
 }
 
-/* Barra de resumen (ALTA/MEDIA/BAJA/completadas) */
+
 .task-summary-bar {
   border-radius: 12px;
   padding: 10px 16px;
   gap: 20px;
 }
 
-/* Tarjeta de tarea individual */
+
 .task-card {
   border-radius: 16px !important;
 }
@@ -587,7 +580,7 @@ body {
   padding: 3px 10px;
 }
 
-/* Paginación: cuadritos de 34x34 separados, no la barra unida clásica de Bootstrap */
+
 .pagination {
   gap: 8px;
 }
@@ -620,7 +613,7 @@ body {
   color: transparent;
 }
 
-/* ===== 4) Inicio de sesión / Registro (pantalla dividida) ===== */
+
 .auth-shell {
   min-height: 100vh;
   background: #080818;
@@ -650,11 +643,37 @@ body {
   background: linear-gradient(45deg, color-mix(in srgb, var(--accent-1) 10%, #284c73 20%) 5%, color-mix(in srgb, var(--accent-3) 100%, #fefcf9) 15%, color-mix(in srgb, var(--accent-1) 5%, #284c73 25%) 65%, color-mix(in srgb, var(--accent-3) 100%, #fefcf9) 85%, color-mix(in srgb, var(--accent-1) 5%, #284c73 20%) 100%);
 }
 
-/* En Registro la ilustración va a la derecha: se espeja (redondeado a
-   la izquierda, hacia la tarjeta; recto a la derecha, hacia el borde). */
+
 .auth-illustration-flip {
   border-radius: 200px 0 0 200px;
   border-left: 1px solid var(--accent-3);
+}
+
+.dashboard-card-progress {
+  sition: relative;
+}
+
+.dash-progress-center {
+  sition: absolute;
+  p: 50%;
+  ft: 50%;
+  ansform: translate(-50%, -50%);
+  xt-align: center;
+
+}
+
+.dash-progress-pct {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+
+}
+
+.dash-progress-focus {
+  display: block;
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
 .auth-illustration .script-logo {
@@ -694,7 +713,7 @@ body {
   padding: 80px;
 }
 
-/* Borde degradado con esquinas redondeadas (dos fondos: uno adentro, otro en el borde) */
+
 .auth-card {
   width: 100%;
   max-width: 400px;
@@ -727,7 +746,7 @@ body {
   background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
 }
 
-/* Campo con ícono: una sola caja con borde, sin las costuras del input-group */
+
 .auth-field {
   position: relative;
 }
@@ -948,7 +967,7 @@ body {
   opacity: 0.85;
 }
 
-/* Card: Calendario + Ilustración */
+
 .dashboard-card-calendar {
   display: flex;
   flex-direction: column;
@@ -1055,7 +1074,7 @@ body {
   display: block;
 }
 
-/* Grid y separaciones del Dashboard */
+
 .dashboard-row {
   --bs-gutter-x: 30px !important;
   --bs-gutter-y: 30px !important;
@@ -1067,7 +1086,7 @@ body {
   gap: 30px !important;
 }
 
-/* Card: Progreso Hoy */
+
 .dashboard-card-progress {
   display: flex;
   flex-direction: column;
@@ -1108,8 +1127,8 @@ body {
 }
 
 .dash-progress-center {
-  position: relative;
-  z-index: 2;
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1132,7 +1151,7 @@ body {
   margin-top: 6px;
 }
 
-/* Card: Racha */
+
 .dashboard-card-streak {
   border-radius: 20px;
   padding: 24px;
@@ -1163,7 +1182,7 @@ body {
   flex-shrink: 0;
 }
 
-/* ===== 6) Construcción ===== */
+
 .construccion-badge {
   font-size: 13px;
   font-weight: 600;
