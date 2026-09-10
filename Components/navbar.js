@@ -50,6 +50,33 @@
     });
   }
 
+  function fillStats() {
+    const statCompleted = document.getElementById("statCompleted");
+    const statPending = document.getElementById("statPending");
+    if (!statCompleted || !statPending) return;
+
+    try {
+      const rawTasks = localStorage.getItem("tasks");
+      if (rawTasks) {
+        const tasks = JSON.parse(rawTasks);
+        if (Array.isArray(tasks) && tasks.length > 0) {
+          const completed = tasks.filter(
+            (t) => t.status === "DONE" || t.status === "HECHO"
+          ).length;
+          const pending = tasks.length - completed;
+          statCompleted.textContent = completed;
+          statPending.textContent = pending;
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+
+    statCompleted.textContent = "2";
+    statPending.textContent = "6";
+  }
+
   function mountNavbar(active) {
     const mountPoint = document.getElementById("navbar-root");
     if (!mountPoint) return Promise.resolve();
@@ -60,6 +87,7 @@
         mountPoint.outerHTML = html;
         setActiveLink(active);
         fillUser();
+        fillStats();
         initTheme();
         initLogout();
       });
@@ -67,4 +95,5 @@
 
   window.Components = window.Components || {};
   window.Components.mountNavbar = mountNavbar;
+  window.Components.fillStats = fillStats;
 })();
