@@ -1,8 +1,12 @@
-// Navbar compartida por todas las páginas. Carga navbar.html y le da comportamiento.
+// Navbar compartida por todas las páginas. El markup ya viene escrito en
+// cada página (ver Components/navbar.html para la referencia); este script
+// solo le da comportamiento, sin cargarlo por fetch (eso hacía que la
+// navbar apareciera con retraso al navegar entre páginas).
 (() => {
   "use strict";
 
   const STORAGE_THEME = "planificador.theme";
+  const STORAGE_STATS = "planificador.stats";
 
   function setActiveLink(active) {
     document.querySelectorAll("#mainNav .nav-link[data-nav-key]").forEach((link) => {
@@ -22,7 +26,6 @@
 
     document.getElementById("navUserName").textContent = name;
     document.getElementById("navUserInitial").textContent = name.charAt(0).toUpperCase();
-    document.getElementById("navUserEmail").textContent = user ? user.email : "";
   }
 
   function initTheme() {
@@ -50,50 +53,39 @@
     });
   }
 
-  function fillStats() {
+  async function fillStats() {
     const statCompleted = document.getElementById("statCompleted");
     const statPending = document.getElementById("statPending");
     if (!statCompleted || !statPending) return;
 
-    try {
-      const rawTasks = localStorage.getItem("tasks");
-      if (rawTasks) {
-        const tasks = JSON.parse(rawTasks);
-        if (Array.isArray(tasks) && tasks.length > 0) {
-          const completed = tasks.filter(
-            (t) => t.status === "DONE" || t.status === "HECHO"
-          ).length;
-          const pending = tasks.length - completed;
-          statCompleted.textContent = completed;
-          statPending.textContent = pending;
-          return;
-        }
-      }
-    } catch (e) {
-      console.warn(e);
-    }
+    if (!window.Api) return;
 
-    statCompleted.textContent = "2";
-    statPending.textContent = "6";
+    try {
+      const tasks = await window.Api.getTasks();
+      const completed = tasks.filter(
+        (t) => t.status === "DONE" || t.status === "HECHO"
+      ).length;
+      const pending = tasks.length - completed;
+      statCompleted.textContent = completed;
+      statPending.textContent = pending;
+      localStorage.setItem(STORAGE_STATS, JSON.stringify({ completed, pending }));
+    } catch (e) {
+      console.warn("No se pudieron cargar las estadísticas del backend:", e);
+      statCompleted.textContent = "-";
+      statPending.textContent = "-";
+    }
   }
 
-  function mountNavbar(active) {
-    const mountPoint = document.getElementById("navbar-root");
-    if (!mountPoint) return Promise.resolve();
-
-    return fetch("../../Components/navbar.html")
-      .then((res) => res.text())
-      .then((html) => {
-        mountPoint.outerHTML = html;
-        setActiveLink(active);
-        fillUser();
-        fillStats();
-        initTheme();
-        initLogout();
-      });
+  function initNavbar(active) {
+    if (!document.getElementById("mainNav")) return;
+    setActiveLink(active);
+    fillUser();
+    fillStats();
+    initTheme();
+    initLogout();
   }
 
   window.Components = window.Components || {};
-  window.Components.mountNavbar = mountNavbar;
+  window.Components.initNavbar = initNavbar;
   window.Components.fillStats = fillStats;
 })();

@@ -159,8 +159,10 @@ body {
 }
 
 .sponsor-logo-wrap {
-  width: 250px;
-  height: 64px;
+  width: 100%;
+  max-width: 250px;
+  aspect-ratio: 250 / 64;
+  height: auto;
   border-radius: 6px;
   overflow: hidden;
   position: relative;
@@ -347,6 +349,7 @@ body {
   background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
   color: #fff;
   font-weight: 600;
+  font-size: 13px;
   white-space: nowrap;
 }
 
@@ -649,33 +652,6 @@ body {
   border-left: 1px solid var(--accent-3);
 }
 
-.dashboard-card-progress {
-  sition: relative;
-}
-
-.dash-progress-center {
-  sition: absolute;
-  p: 50%;
-  ft: 50%;
-  ansform: translate(-50%, -50%);
-  xt-align: center;
-
-}
-
-.dash-progress-pct {
-  display: block;
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1;
-
-}
-
-.dash-progress-focus {
-  display: block;
-  font-size: 0.9rem;
-  opacity: 0.8;
-}
-
 .auth-illustration .script-logo {
   font-family: "Segoe Script", "Brush Script MT", cursive;
   font-size: 28px;
@@ -694,8 +670,10 @@ body {
 
 .auth-brand-logo {
   display: block;
-  width: 220px;
-  height: 59px;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 220 / 59;
+  height: auto;
 }
 
 .auth-illustration-img {
@@ -798,36 +776,6 @@ body {
   color: var(--accent-2);
 }
 
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--bs-secondary-color);
-  font-size: 12px;
-  margin: 6px 0;
-}
-
-.auth-divider::before,
-.auth-divider::after {
-  content: "";
-  flex: 1;
-  border-top: 1px solid var(--bs-border-color);
-}
-
-.btn-google {
-  background: white;
-  color: #281d16;
-  border: 1px solid rgba(40, 29, 22, 0.2);
-  font-weight: 600;
-  font-size: 13px;
-}
-
-.btn-google:hover {
-  background: #f5f5f5;
-  color: #281d16;
-}
-
-
 .dashboard-card {
   border-radius: 20px;
   padding: 24px;
@@ -860,6 +808,12 @@ body {
 [data-bs-theme="light"] .dashboard-card-today {
   background: #f4ece2;
   border-color: rgba(40, 29, 22, 0.08);
+}
+
+#dashTodayTasks {
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .today-task-item {
@@ -905,45 +859,6 @@ body {
   height: 8px;
   background-color: currentColor;
   border-radius: 50%;
-}
-
-.badge-dash-alta {
-  background-color: #ff3b64;
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 12px;
-  letter-spacing: 0.03em;
-}
-
-.badge-dash-media {
-  background-color: #fbb034;
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 12px;
-  letter-spacing: 0.03em;
-}
-
-.badge-dash-teal {
-  background-color: #10b981;
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 12px;
-  letter-spacing: 0.03em;
-}
-
-[data-bs-theme="light"] .badge-dash-alta {
-  background-color: #e11d48;
-}
-
-[data-bs-theme="light"] .badge-dash-media {
-  background-color: #f59e0b;
-}
-
-[data-bs-theme="light"] .badge-dash-teal {
-  background-color: #059669;
 }
 
 .dash-add-task-link {
@@ -1057,9 +972,31 @@ body {
   display: inline-block;
 }
 
+.mini-cal-task-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #0ea5e9;
+  margin-left: 3px;
+  vertical-align: middle;
+}
+
 [data-bs-theme="light"] .cal-today-badge {
   background: #281d16;
   color: #ffffff;
+}
+
+.cal-birthday-badge {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: #ffffff;
+  border-radius: 5px;
+  padding: 2px 6px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
 }
 
 .dash-art-wrap {
@@ -1114,16 +1051,28 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 16px auto;
+  flex-shrink: 0;
+  margin: auto;
 }
 
-.dash-progress-brush-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
+.dash-progress-ring-svg {
   width: 100%;
   height: 100%;
-  pointer-events: none;
+  transform: rotate(-90deg);
+}
+
+.dash-progress-track {
+  fill: none;
+  stroke: var(--bs-border-color);
+  stroke-width: 14;
+}
+
+.dash-progress-fill {
+  fill: none;
+  stroke: url(#dashProgressGradient);
+  stroke-width: 14;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.4s ease;
 }
 
 .dash-progress-center {
@@ -1140,15 +1089,23 @@ body {
   font-size: 2.8rem;
   font-weight: 800;
   line-height: 1;
-  color: #ffffff;
 }
 
 .dash-progress-focus {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #ffffff;
   opacity: 0.95;
   margin-top: 6px;
+}
+
+[data-bs-theme="dark"] .dash-progress-pct,
+[data-bs-theme="dark"] .dash-progress-focus {
+  color: #ffffff;
+}
+
+[data-bs-theme="light"] .dash-progress-pct,
+[data-bs-theme="light"] .dash-progress-focus {
+  color: #281d16;
 }
 
 
@@ -1196,4 +1153,235 @@ body {
   width: 100%;
   height: auto;
   margin: 24px auto;
+}
+
+
+/* ==========================================================
+   CALENDARIO
+   ========================================================== */
+
+.cal-card {
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid var(--bs-border-color);
+  background: var(--bs-tertiary-bg);
+}
+
+[data-bs-theme="dark"] .cal-card {
+  background: #101022;
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+[data-bs-theme="light"] .cal-card {
+  background: #fdfbf7;
+  border-color: rgba(40, 29, 22, 0.09);
+}
+
+.cal-month-label {
+  font-weight: 700;
+  font-size: 14px;
+  min-width: 150px;
+  text-align: center;
+  display: inline-block;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.cal-grid-header {
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--bs-secondary-color);
+  text-align: center;
+}
+
+.cal-weekend-label {
+  color: #0ea5e9;
+}
+
+.cal-day-cell {
+  min-height: 96px;
+  min-width: 0;
+  border-radius: 12px;
+  border: 1px solid var(--bs-border-color);
+  background: transparent;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  overflow: hidden;
+}
+
+.cal-day-cell:hover {
+  border-color: var(--accent-1);
+}
+
+.cal-day-cell.cal-other-month {
+  opacity: 0.35;
+}
+
+.cal-day-cell.cal-weekend .cal-day-number {
+  color: #0ea5e9;
+}
+
+.cal-day-cell.cal-is-today .cal-day-number {
+  background: #000000;
+  color: #fff;
+  border-radius: 5px;
+  padding: 1px 6px;
+}
+
+[data-bs-theme="light"] .cal-day-cell.cal-is-today .cal-day-number {
+  background: #281d16;
+}
+
+.cal-day-cell.cal-is-selected {
+  border-color: var(--accent-1);
+  background: color-mix(in srgb, var(--accent-1) 12%, transparent);
+}
+
+.cal-day-number {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.cal-day-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  min-width: 0;
+}
+
+.cal-task-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  background: var(--bs-secondary-bg);
+  border-radius: 6px;
+  padding: 2px 6px;
+  width: 100%;
+  min-width: 0;
+}
+
+.cal-task-pill .dot {
+  flex-shrink: 0;
+}
+
+.cal-task-pill-text {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cal-more-badge {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--bs-secondary-color);
+  padding-left: 2px;
+}
+
+.cal-legend {
+  font-size: 11px;
+  color: var(--bs-secondary-color);
+}
+
+/* Bootstrap's .d-flex usa !important, que gana sobre el atributo [hidden]
+   nativo; sin esto, el estado vacío del panel del día quedaría visible
+   aunque tenga el atributo hidden. */
+#calEmptyState[hidden] {
+  display: none !important;
+}
+
+
+/* ==========================================================
+   REPORTES
+   ========================================================== */
+
+.report-card {
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid var(--bs-border-color);
+  background: var(--bs-tertiary-bg);
+}
+
+[data-bs-theme="dark"] .report-card {
+  background: #101022;
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+[data-bs-theme="light"] .report-card {
+  background: #fdfbf7;
+  border-color: rgba(40, 29, 22, 0.09);
+}
+
+.period-btn {
+  border: 1px solid var(--bs-border-color);
+  background: transparent;
+  color: var(--bs-body-color);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.period-btn.active {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+  border-color: transparent;
+}
+
+.report-table {
+  color: var(--bs-body-color);
+  font-size: 13px;
+}
+
+.report-table thead th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--bs-secondary-color);
+  border-bottom-width: 1px;
+  white-space: nowrap;
+}
+
+.report-table td {
+  vertical-align: top;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  #reportPrintArea,
+  #reportPrintArea * {
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border-color: #ccc !important;
+  }
 }

@@ -36,18 +36,73 @@
   // ===== Formulario de acceso =====
   const form = document.getElementById("loginForm");
   const errorBox = document.getElementById("loginError");
+  const submitBtn = form.querySelector("button[type='submit']");
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const email = document.getElementById("email").value;
     const password = passwordInput.value;
-    const success = Auth.login(email, password);
 
-    if (success) {
+    errorBox.hidden = true;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "INGRESANDO...";
+
+    try {
+      await Auth.login(email, password);
       window.location.href = "../tareas/tareas.html";
-    } else {
+    } catch (error) {
+      errorBox.textContent = error.message || "Correo o contraseña incorrectos.";
       errorBox.hidden = false;
+      submitBtn.disabled = false;
+      submitBtn.textContent = "INICIAR SESIÓN";
+    }
+  });
+
+  // ===== ¿Olvidaste tu contraseña? (diálogo) =====
+  const forgotPasswordModalEl = document.getElementById("forgotPasswordModal");
+  const forgotPasswordForm = document.getElementById("forgotPasswordForm");
+  const resetEmailInput = document.getElementById("resetEmail");
+  const newPasswordInput = document.getElementById("newPassword");
+  const resetSuccess = document.getElementById("resetSuccess");
+  const resetError = document.getElementById("resetError");
+  const resetBtn = document.getElementById("resetPasswordBtn");
+
+  forgotPasswordModalEl.addEventListener("show.bs.modal", () => {
+    resetError.hidden = true;
+    resetSuccess.hidden = true;
+    forgotPasswordForm.reset();
+    resetEmailInput.value = document.getElementById("email").value.trim();
+  });
+
+  forgotPasswordForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = resetEmailInput.value.trim();
+    const newPassword = newPasswordInput.value;
+
+    resetError.hidden = true;
+    resetSuccess.hidden = true;
+
+    if (newPassword.length < 5) {
+      resetError.textContent = "La contraseña debe tener al menos 5 caracteres.";
+      resetError.hidden = false;
+      return;
+    }
+
+    resetBtn.disabled = true;
+    resetBtn.textContent = "GUARDANDO...";
+
+    try {
+      await window.Api.resetPassword({ email: email.toLowerCase(), newPassword });
+      resetSuccess.hidden = false;
+      forgotPasswordForm.reset();
+    } catch (error) {
+      resetError.textContent = error.message || "No se pudo actualizar la contraseña.";
+      resetError.hidden = false;
+    } finally {
+      resetBtn.disabled = false;
+      resetBtn.textContent = "RESTABLECER CONTRASEÑA";
     }
   });
 })();

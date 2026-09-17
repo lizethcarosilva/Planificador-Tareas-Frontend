@@ -4,6 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      var theme = localStorage.getItem("planificador.theme") || "dark";
+      document.documentElement.setAttribute("data-bs-theme", theme);
+      document.documentElement.style.backgroundColor = theme === "light" ? "#fefcf9" : "#080818";
+    })();
+  </script>
   <title>Dashboard · TaskPlanning</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +22,85 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-  <div id="navbar-root"></div>
+  <script src="../../Components/auth.js"></script>
+  <script>
+    if (!Auth.getUser()) {
+      window.location.replace("../inicio-sesion/inicio-sesion.html");
+    }
+  </script>
+    <nav class="navbar navbar-expand-lg sticky-top border-bottom bg-body-tertiary">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="../tareas/tareas.html">
+        <span class="logo-wrap">
+          <img class="logo-crop sponsor-logo-dark" src="../../Assets/Images/logo-dark.png" alt="Logo Planificador de Tareas">
+          <img class="logo-fit sponsor-logo-light" src="../../Assets/Images/logo-light.png" alt="Logo Planificador de Tareas">
+        </span>
+      <span class="text-brand-accent">TaskPlanning</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav me-auto mb-3 mb-lg-0 gap-lg-1">
+          <li class="nav-item"><a class="nav-link" data-nav-key="dashboard" href="../dashboard/dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav-key="tareas" href="../tareas/tareas.html">Tareas</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav-key="calendario" href="../calendario/calendario.html">Calendario</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav-key="reportes" href="../reportes/reportes.html">Reportes</a></li>
+        </ul>
+
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <span class="badge rounded-pill border bg-body-tertiary text-body fw-normal">
+            <span class="dot dot-baja"></span>
+            Completadas <span id="statCompleted">0</span>
+          </span>
+          <span class="badge rounded-pill border bg-body-tertiary text-body fw-normal">
+            <span class="dot dot-alta"></span>
+            Pendientes <span id="statPending">0</span>
+          </span>
+
+          <div class="form-check form-switch mb-0 ms-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="themeToggle" aria-label="Cambiar a modo claro">
+          </div>
+
+          <div class="dropdown ms-2">
+            <button class="btn d-flex align-items-center gap-2 border bg-body-tertiary rounded-3 px-2 py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="avatar-brand" id="navUserInitial">L</span>
+              <span class="fw-bold small d-none d-md-inline" id="navUserName">Invitado</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="../ajustes/ajustes.html">Ajustes</a></li>
+              <li><button class="dropdown-item" id="logoutBtn" type="button">Cerrar sesión</button></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <script>
+    (function () {
+      var user = window.Auth ? window.Auth.getUser() : null;
+      var name = user ? user.name : "Invitado";
+      document.getElementById("navUserName").textContent = name;
+      document.getElementById("navUserInitial").textContent = name.charAt(0).toUpperCase();
+
+      var themeToggle = document.getElementById("themeToggle");
+      if (themeToggle) {
+        themeToggle.checked = (localStorage.getItem("planificador.theme") || "dark") === "light";
+      }
+
+      try {
+        var cachedStats = JSON.parse(localStorage.getItem("planificador.stats") || "null");
+        if (cachedStats) {
+          document.getElementById("statCompleted").textContent = cachedStats.completed;
+          document.getElementById("statPending").textContent = cachedStats.pending;
+        }
+      } catch (e) {
+        // Sin cache aun, se completa con la primera consulta al backend.
+      }
+    })();
+  </script>
 
   <main class="container-fluid px-4 py-4 flex-grow-1">
 
@@ -31,68 +116,13 @@
         <section class="card dashboard-card dashboard-card-today flex-grow-1">
           <h2 class="fs-5 fw-bold mb-3">Tareas de hoy</h2>
 
-          <div class="d-flex flex-column gap-1 flex-grow-1" id="dashTodayTasks">
-            <!-- Tarea 1 -->
-            <div class="today-task-item">
-              <span class="today-task-radio active" role="button" aria-label="Tarea completada"></span>
-              <div class="flex-grow-1 min-w-0">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                  <p class="mb-0 fw-medium small" style="line-height: 1.35;">Comprar leche descremada en el
-                    supermercado.</p>
-                  <span class="badge rounded-pill badge-dash-alta">ALTA</span>
-                </div>
-                <span class="text-body-secondary" style="font-size: 11px;">08:00 AM</span>
-              </div>
-            </div>
+          <div class="alert alert-danger py-2 small" id="dashError" hidden></div>
 
-            <!-- Tarea 2 -->
-            <div class="today-task-item">
-              <span class="today-task-radio" role="button" aria-label="Marcar tarea"></span>
-              <div class="flex-grow-1 min-w-0">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                  <p class="mb-0 fw-medium small" style="line-height: 1.35;">Solicitar cita medica.</p>
-                  <span class="badge rounded-pill badge-dash-media">MEDIA</span>
-                </div>
-                <span class="text-body-secondary" style="font-size: 11px;">09:00 AM</span>
-              </div>
-            </div>
+          <div class="d-flex flex-column gap-1 flex-grow-1" id="dashTodayTasks"></div>
 
-            <!-- Tarea 3 -->
-            <div class="today-task-item">
-              <span class="today-task-radio" role="button" aria-label="Marcar tarea"></span>
-              <div class="flex-grow-1 min-w-0">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                  <p class="mb-0 fw-medium small" style="line-height: 1.35;">Llamar a nicolas compañero de trabajo.</p>
-                  <span class="badge rounded-pill badge-dash-teal">MEDIA</span>
-                </div>
-                <span class="text-body-secondary" style="font-size: 11px;">10:00 AM</span>
-              </div>
-            </div>
-
-
-            <div class="today-task-item">
-              <span class="today-task-radio" role="button" aria-label="Marcar tarea"></span>
-              <div class="flex-grow-1 min-w-0">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                  <p class="mb-0 fw-medium small" style="line-height: 1.35;">Comprar galletas.</p>
-                  <span class="badge rounded-pill badge-dash-media">MEDIA</span>
-                </div>
-                <span class="text-body-secondary" style="font-size: 11px;">11:00 AM</span>
-              </div>
-            </div>
-
-
-            <div class="today-task-item">
-              <span class="today-task-radio" role="button" aria-label="Marcar tarea"></span>
-              <div class="flex-grow-1 min-w-0">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                  <p class="mb-0 fw-medium small" style="line-height: 1.35;">Comprar huevos.</p>
-                  <span class="badge rounded-pill badge-dash-media">MEDIA</span>
-                </div>
-                <span class="text-body-secondary" style="font-size: 11px;">02:00 PM</span>
-              </div>
-            </div>
-          </div>
+          <p class="text-body-secondary small text-center py-3 mb-0" id="dashTodayEmpty" hidden>
+            No tienes tareas programadas para hoy.
+          </p>
 
 
           <a href="../tareas/tareas.html" class="dash-add-task-link">
@@ -105,83 +135,21 @@
       <div class="col-12 col-lg-4 col-xl-4 d-flex">
         <section class="card dashboard-card dashboard-card-calendar flex-grow-1">
 
-          <div class="mini-cal-month-pill">August</div>
+          <div class="mini-cal-month-pill" id="dashMiniCalMonth">—</div>
 
           <table class="mini-cal-table">
             <thead>
               <tr>
-                <th>08</th>
-                <th>Mo</th>
-                <th>Tu</th>
-                <th>We</th>
-                <th>Th</th>
-                <th>Fr</th>
-                <th class="cal-weekend">Sa</th>
-                <th class="cal-weekend">Su</th>
+                <th>Lu</th>
+                <th>Ma</th>
+                <th>Mi</th>
+                <th>Ju</th>
+                <th>Vi</th>
+                <th class="cal-weekend">Sá</th>
+                <th class="cal-weekend">Do</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td><span class="cal-week-badge">31</span></td>
-                <td class="cal-other-month">27</td>
-                <td class="cal-other-month">28</td>
-                <td class="cal-other-month">29</td>
-                <td class="cal-other-month">30</td>
-                <td class="cal-other-month">31</td>
-                <td class="cal-weekend">1</td>
-                <td class="cal-weekend">2</td>
-              </tr>
-              <tr>
-                <td><span class="cal-week-badge">32</span></td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td class="cal-weekend">8</td>
-                <td class="cal-weekend">9</td>
-              </tr>
-              <tr>
-                <td><span class="cal-week-badge">33</span></td>
-                <td>10</td>
-                <td>11</td>
-                <td><span class="cal-today-badge">12</span></td>
-                <td>13</td>
-                <td>14</td>
-                <td class="cal-weekend">15</td>
-                <td class="cal-weekend">16</td>
-              </tr>
-              <tr>
-                <td><span class="cal-week-badge">34</span></td>
-                <td>17</td>
-                <td>18</td>
-                <td>19</td>
-                <td>20</td>
-                <td>21</td>
-                <td class="cal-weekend">22</td>
-                <td class="cal-weekend">23</td>
-              </tr>
-              <tr>
-                <td><span class="cal-week-badge">35</span></td>
-                <td>24</td>
-                <td>25</td>
-                <td>26</td>
-                <td>27</td>
-                <td>28</td>
-                <td class="cal-weekend">29</td>
-                <td class="cal-weekend">30</td>
-              </tr>
-              <tr>
-                <td><span class="cal-week-badge">36</span></td>
-                <td>31</td>
-                <td class="cal-other-month">1</td>
-                <td class="cal-other-month">2</td>
-                <td class="cal-other-month">3</td>
-                <td class="cal-other-month">4</td>
-                <td class="cal-weekend cal-other-month">5</td>
-                <td class="cal-weekend cal-other-month">6</td>
-              </tr>
-            </tbody>
+            <tbody id="dashMiniCalBody"></tbody>
           </table>
 
 
@@ -198,45 +166,22 @@
       <div class="col-12 col-lg-3 col-xl-4 dashboard-right-col">
         <section class="card dashboard-card dashboard-card-progress flex-grow-1">
           <h2 class="fs-5 fw-bold w-100 text-start mb-0">Progreso Hoy</h2>
-          <svg class="dash-progress-brush-svg" viewBox="0 0 240 240">
-            <defs>
-              <filter id="brushFilterDark" x="-20%" y="-20%" width="140%" height="140%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="4" result="noise" />
-                <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G" />
-              </filter>
-              <filter id="brushFilterLight" x="-20%" y="-20%" width="140%" height="140%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="4" result="noise" />
-                <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G" />
-              </filter>
+          <div class="dash-progress-ring-box">
+            <svg class="dash-progress-ring-svg" viewBox="0 0 240 240">
+              <defs>
+                <linearGradient id="dashProgressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop class="progress-gradient-start" offset="0%"></stop>
+                  <stop class="progress-gradient-end" offset="100%"></stop>
+                </linearGradient>
+              </defs>
+              <circle class="dash-progress-track" cx="120" cy="120" r="100"></circle>
+              <circle class="dash-progress-fill" id="dashProgressRing" cx="120" cy="120" r="100"></circle>
+            </svg>
 
-              <linearGradient id="brushGradEpic" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#06B6D4" />
-                <stop offset="48%" stop-color="#7C3AED" />
-                <stop offset="100%" stop-color="#EC4899" />
-              </linearGradient>
-
-
-              <linearGradient id="brushGradLight" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#284C73" />
-                <stop offset="100%" stop-color="#7E5F42" />
-              </linearGradient>
-            </defs>
-
-
-            <circle class="sponsor-logo-dark" cx="120" cy="120" r="92" fill="#131326" />
-            <circle class="sponsor-logo-light" cx="120" cy="120" r="92" fill="#241d18" />
-
-
-            <circle class="sponsor-logo-dark" cx="120" cy="120" r="92" fill="none" stroke="url(#brushGradEpic)"
-              stroke-width="10" filter="url(#brushFilterDark)" stroke-linecap="round" />
-
-            <circle class="sponsor-logo-light" cx="120" cy="120" r="92" fill="none" stroke="url(#brushGradLight)"
-              stroke-width="10" filter="url(#brushFilterLight)" stroke-linecap="round" />
-          </svg>
-
-          <div class="dash-progress-center">
-            <span class="dash-progress-pct">20%</span>
-            <span class="dash-progress-focus">Enfoque Actual</span>
+            <div class="dash-progress-center">
+              <span class="dash-progress-pct" id="dashProgressPct">0%</span>
+              <span class="dash-progress-focus">Progreso de hoy</span>
+            </div>
           </div>
       </div>
       </section>
@@ -250,10 +195,10 @@
           </div>
           <div>
             <div class="lh-1 mb-1">
-              <span class="display-6 fw-bold">12</span>
+              <span class="display-6 fw-bold" id="dashStreakDays">0</span>
               <span class="fs-5 fw-semibold ms-1">días</span>
             </div>
-            <div class="fw-bold fs-6">¡Sigue así!</div>
+            <div class="fw-bold fs-6" id="dashStreakMsg">Completa una tarea hoy</div>
           </div>
         </div>
       </section>
@@ -265,25 +210,56 @@
     </div>
   </main>
 
-  <div id="footer-root"></div>
+    <footer class="border-top bg-body-tertiary mt-auto">
+    <div class="container-fluid px-4 py-5">
+      <div class="row g-4">
+        <div class="col-12 col-md-5">
+          <p class="fw-bold mb-2">Planificador de Tareas</p>
+          <p class="small text-body-secondary">Organiza tus tareas de forma inteligente. Productividad sin fricciones, diseñada para ti.</p>
+          <p class="small fw-bold mb-1" style="color: var(--accent-1);">AUTORA</p>
+          <p class="small fw-semibold mb-0">Lizeth Andrea Caro Silva</p>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <p class="small fw-bold mb-2" style="color: var(--accent-1);">NAVEGACIÓN</p>
+          <ul class="list-unstyled d-flex flex-column gap-2 small mb-0">
+            <li><a class="text-body-secondary text-decoration-none" href="../dashboard/dashboard.html">Dashboard</a></li>
+            <li><a class="text-body-secondary text-decoration-none" href="../tareas/tareas.html">Lista de Tareas</a></li>
+            <li><a class="text-body-secondary text-decoration-none" href="../calendario/calendario.html">Calendario</a></li>
+            <li><a class="text-body-secondary text-decoration-none" href="../reportes/reportes.html">Reportes</a></li>
+            <li><a class="text-body-secondary text-decoration-none" href="../ajustes/ajustes.html">Ajustes</a></li>
+          </ul>
+        </div>
+
+        <div class="col-6 col-md-4">
+          <p class="small fw-bold mb-2" style="color: var(--accent-1);">PATROCINADORES</p>
+          <p class="small text-body-secondary">Proyecto posible gracias al apoyo de nuestros patrocinadores principales.</p>
+          <div class="card bg-body-secondary p-3 d-inline-flex" style="width: fit-content;">
+            <div class="sponsor-logo-wrap sponsor-logo-dark">
+              <img src="../../Assets/Images/sponsor-dark.png" alt="Generation">
+            </div>
+            <div class="sponsor-logo-wrap sponsor-logo-light">
+              <img src="../../Assets/Images/sponsor-light.png" alt="Generation">
+            </div>
+            <p class="small text-body-secondary mt-2 mb-0">Patrocinador Principal</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-top py-3">
+      <div class="container-fluid px-4">
+        <p class="small text-body-secondary mb-0">© 2025 Planificador de Tareas · Lizeth Andrea Caro Silva</p>
+      </div>
+    </div>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../../Components/auth.js"></script>
+  <script src="../../Components/config.js"></script>
   <script src="../../Components/navbar.js"></script>
-  <script src="../../Components/footer.js"></script>
+  <script src="dashboard.js"></script>
   <script>
-    if (!Auth.getUser()) {
-      window.location.replace("../inicio-sesion/inicio-sesion.html");
-    } else {
-      Promise.all([Components.mountNavbar("dashboard"), Components.mountFooter()]);
-    }
-
-
-    document.querySelectorAll(".today-task-radio").forEach((radio) => {
-      radio.addEventListener("click", () => {
-        radio.classList.toggle("active");
-      });
-    });
+    Components.initNavbar("dashboard");
   </script>
 </body>
 

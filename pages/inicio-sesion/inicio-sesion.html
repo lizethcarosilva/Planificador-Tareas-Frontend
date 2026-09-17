@@ -3,6 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      var theme = localStorage.getItem("planificador.theme") || "dark";
+      document.documentElement.setAttribute("data-bs-theme", theme);
+      document.documentElement.style.backgroundColor = theme === "light" ? "#fefcf9" : "#080818";
+    })();
+  </script>
   <title>Iniciar sesión · TaskPlanning</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,18 +88,11 @@
               <input class="form-check-input" type="checkbox" id="rememberMe" checked>
               <label class="form-check-label" for="rememberMe">Recordame</label>
             </div>
-            <a href="#">¿Olvidaste tu contraseña?</a>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">¿Olvidaste tu contraseña?</a>
           </div>
 
           <button type="submit" class="btn btn-brand">INICIAR SESIÓN</button>
         </form>
-
-        <div class="auth-divider">o</div>
-
-        <button type="button" class="btn btn-google w-100 d-flex align-items-center justify-content-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.95v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.95A9 9 0 0 0 0 9c0 1.45.35 2.83.95 4.03l3-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .95 4.97l3 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-          Continuar con Google
-        </button>
 
         <p class="text-center small text-body-secondary mt-3 mb-0">
           ¿No tienes una cuenta?
@@ -102,7 +102,46 @@
     </div>
   </div>
 
+  <!-- Diálogo: ¿Olvidaste tu contraseña? -->
+  <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold" id="forgotPasswordModalLabel">Restablecer contraseña</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p class="small text-body-secondary">Escribe tu correo y la nueva contraseña que quieres usar.</p>
+
+          <div class="alert alert-success py-2 small" id="resetSuccess" hidden>Contraseña actualizada. Ya puedes iniciar sesión.</div>
+          <div class="alert alert-danger py-2 small" id="resetError" hidden></div>
+
+          <form id="forgotPasswordForm" novalidate class="d-flex flex-column gap-3">
+            <div>
+              <label for="resetEmail" class="form-label small mb-1">Correo electrónico</label>
+              <div class="auth-field">
+                <i class="bi bi-envelope field-icon"></i>
+                <input id="resetEmail" type="email" class="form-control" placeholder="nombre@correo.com" required>
+              </div>
+            </div>
+
+            <div>
+              <label for="newPassword" class="form-label small mb-1">Nueva contraseña</label>
+              <div class="auth-field">
+                <i class="bi bi-lock field-icon"></i>
+                <input id="newPassword" type="password" class="form-control" placeholder="Escribe tu nueva contraseña" minlength="5" required>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-brand" id="resetPasswordBtn">RESTABLECER CONTRASEÑA</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../Components/config.js"></script>
   <script src="../../Components/auth.js"></script>
   <script src="inicio-sesion.js"></script>
 </body>
