@@ -1,14 +1,5 @@
-// ==========================================================
-// Configuración de la API del Planificador de Tareas.
-// ==========================================================
-// LOCAL: apunta al backend de Spring Boot corriendo en tu máquina
-// (`mvnw spring-boot:run` o `docker compose up` dentro de Planificador-Tareas-Backend).
-//
-// PRODUCCIÓN (Render): cuando despliegues el backend, copia la URL pública
-// que te entregue Render (ej: "https://planificador-tareas-backend.onrender.com")
-// y pégala aquí abajo, en RENDER_API_URL. Mientras esté vacía, el frontend
-// seguirá usando el backend local.
-const RENDER_API_URL = ""; // <-- coloca aquí el link de Render, ej: "https://tu-backend.onrender.com"
+
+const RENDER_API_URL = ""; 
 const LOCAL_API_URL = "http://localhost:8080";
 
 (() => {

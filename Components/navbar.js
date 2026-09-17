@@ -1,7 +1,5 @@
-// Navbar compartida por todas las páginas. El markup ya viene escrito en
-// cada página (ver Components/navbar.html para la referencia); este script
-// solo le da comportamiento, sin cargarlo por fetch (eso hacía que la
-// navbar apareciera con retraso al navegar entre páginas).
+
+
 (() => {
   "use strict";
 
